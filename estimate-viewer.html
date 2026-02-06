@@ -226,6 +226,25 @@
             border-bottom: none;
         }
 
+        .service-includes-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--success);
+            background: var(--success-light);
+            padding: 2px 8px;
+            border-radius: 4px;
+            margin-left: 8px;
+            line-height: 1.4;
+            vertical-align: middle;
+        }
+
+        .service-includes-badge svg {
+            flex-shrink: 0;
+        }
+
         .service-name {
             flex: 1;
         }
@@ -614,6 +633,14 @@
                 border: 0.5pt solid #ccc;
             }
 
+            .service-includes-badge {
+                font-size: 8pt;
+                color: #333;
+                background: #eee !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
             .pet-summary {
                 background: #f5f5f5 !important;
                 border-left: 2pt solid #000;
@@ -767,7 +794,7 @@
                     pet.optionals.forEach(function(service) {
                         optionalHtml += `
                             <li class="service-item optional">
-                                <span class="service-name">+ ${service.name}</span>
+                                <span class="service-name">+ ${service.name}${service.includesNote ? '<span class="service-includes-badge"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10 3L4.5 8.5L2 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>' + service.includesNote + '</span>' : ''}</span>
                                 <span class="service-cost">+${formatCurrency(service.cost)}/mo</span>
                             </li>
                         `;
