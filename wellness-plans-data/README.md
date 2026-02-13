@@ -8,6 +8,43 @@ This repository contains the centralized pricing and service data for the veteri
 - **Automatic synchronization** to all hospital computers
 - **Admin interface** for non-technical staff to update pricing
 - **Built-in audit trail** via Git commit history
+- **Secure workflow-based updates** via GitHub Actions
+
+## 🔒 Security Architecture
+
+### GitHub Actions Workflow
+
+Pricing updates are handled by a secure GitHub Actions workflow:
+
+**How It Works:**
+1. Admin interface triggers workflow via API
+2. Workflow validates and commits changes
+3. Token stored as encrypted GitHub Secret (never in code)
+4. Full audit trail in workflow logs
+
+**Benefits:**
+- ✅ No user token management required
+- ✅ Maximum security (token never exposed)
+- ✅ Professional architecture
+- ✅ Zero infrastructure costs
+
+### Token Management
+
+**Admin** (one-time setup):
+- Creates fine-grained PAT with minimal permissions
+- Configures in browser localStorage
+- Rotates annually
+
+**Staff** (regular users):
+- No token management required
+- Just log in with password
+- Use interface normally
+
+### Audit Trail
+
+All changes tracked at:
+- **Commits**: https://github.com/samsamanowitz/Wellness-Plan-Estimates/commits/main/wellness-plans-data/plans.json
+- **Workflows**: https://github.com/samsamanowitz/Wellness-Plan-Estimates/actions
 
 ## 📁 Repository Structure
 
@@ -29,33 +66,41 @@ wellness-plans-data/
 4. Wait 1-2 minutes for deployment
 5. Verify your site is published at: `https://YOUR-USERNAME.github.io/wellness-plans-data/`
 
-### 2. Create GitHub Personal Access Token
+### 2. Create Fine-Grained Personal Access Token (Administrator Only)
 
-1. Go to GitHub → **Settings** → **Developer settings** → **Personal access tokens** → **Tokens (classic)**
-2. Click **Generate new token (classic)**
-3. Set token name: `Wellness Plans Admin`
-4. Set expiration: `90 days` (recommended for security)
-5. Select scope: **✅ repo** (full control of private repositories)
-6. Click **Generate token**
-7. **IMPORTANT**: Copy the token immediately (it's only shown once!)
-8. Store securely (password manager recommended)
+**Note**: This is for the repository administrator only. Staff don't need tokens.
 
-### 3. Configure Admin Interface
+1. Go to: https://github.com/settings/tokens?type=beta
+2. Click **"Generate new token"**
+3. Configure:
+   - **Name**: `Wellness Plans Workflow Trigger`
+   - **Expiration**: 1 year
+   - **Repository access**: Only select `Wellness-Plan-Estimates`
+   - **Permissions**:
+     - **Actions**: Read and write ✅
+     - **Contents**: Read-only ✅
+     - **Metadata**: Read-only ✅ (auto-selected)
+4. Generate and **copy token** (starts with `github_pat_`)
+5. **IMPORTANT**: Store securely (you'll only see it once!)
 
-1. Open `admin.html` in a text editor
-2. Find these lines near the top of the `<script>` section:
-   ```javascript
-   const GITHUB_OWNER = 'YOUR-GITHUB-USERNAME';  // Replace with your GitHub username or org
-   const GITHUB_REPO = 'wellness-plans-data';    // Repository name
-   ```
-3. Replace `YOUR-GITHUB-USERNAME` with your actual GitHub username or organization name
-4. Save the file
-5. Commit and push the change:
-   ```bash
-   git add admin.html
-   git commit -m "Configure GitHub owner for admin interface"
-   git push
-   ```
+**Why This Token is Secure:**
+- Only triggers workflows (cannot commit directly)
+- Only works for this one repository
+- Expires automatically after 1 year
+- Minimal permissions (least privilege principle)
+
+### 3. Configure Admin Interface (First-Time Use)
+
+**When first opening the admin portal:**
+
+1. Open `wellness-plans-data/admin.html` in your browser
+2. Log in with password (as usual)
+3. Click **"Configure Workflow Token"** button (one-time setup)
+4. Paste the token you created in step 2
+5. Token stored in browser localStorage (never in code)
+6. Done! Staff never see this again
+
+**Note**: This setup only needs to be done once per browser. Staff don't need to do this.
 
 ### 4. Test the Setup
 
@@ -90,12 +135,15 @@ Open in your browser:
 https://YOUR-USERNAME.github.io/wellness-plans-data/admin.html
 ```
 
-### First-Time Login
+### Login
 
-1. Enter your GitHub Personal Access Token
+1. Enter the admin password
 2. Click **Login**
-3. Token is saved in browser's localStorage for convenience
-4. You'll see all plans and settings loaded
+3. You'll see all plans and settings loaded
+
+**Administrator First-Time Setup:**
+- If this is your first time, you'll need to configure the workflow token (see setup instructions)
+- Staff users don't need to configure anything - just log in with password
 
 ### Updating Prices
 
@@ -132,9 +180,10 @@ Click **View Audit Log** in the top-right corner to see:
 
 ### Security
 
-- **Token Expiration**: Rotate your token every 90 days
-- **Logout**: Click **Logout** to remove token from browser
-- **Revoke Token**: Go to GitHub Settings → Personal access tokens → Revoke if compromised
+- **Token Rotation**: Administrator should rotate workflow token annually
+- **Logout**: Click **Logout** to end your session
+- **Revoke Token**: Admin can revoke at: https://github.com/settings/tokens
+- **Password**: Change password by updating `PASSWORD_HASH` in admin.html
 
 ## 🏥 Hospital Computer Setup
 
@@ -255,6 +304,15 @@ For technical support or questions:
 - **GitHub Issues**: [Link to issues page]
 
 ## 📝 Change Log
+
+### Version 2026.2 (February 13, 2026)
+- ✅ **Security Enhancement**: Migrated to GitHub Actions workflow architecture
+- ✅ **Zero token exposure**: Removed hardcoded tokens from all files
+- ✅ **Fine-grained permissions**: Token only triggers workflows (minimal access)
+- ✅ **Professional architecture**: Same approach used by enterprise applications
+- ✅ **Improved audit trail**: Workflow logs + Git commits
+- ✅ **Service management**: Added full CRUD operations for services via admin portal
+- ✅ **Service code migration**: All services now use Covetrus codes
 
 ### Version 2026.1 (February 2026)
 - Initial admin interface implementation

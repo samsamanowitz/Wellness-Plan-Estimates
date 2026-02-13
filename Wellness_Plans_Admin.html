@@ -1,4 +1,24 @@
 <!DOCTYPE html>
+<!--
+═══════════════════════════════════════════════════════════════
+⚠️  SECURITY WARNING ⚠️
+═══════════════════════════════════════════════════════════════
+
+❌ NEVER COMMIT TOKENS TO THIS FILE:
+   • GitHub Personal Access Tokens (ghp_... or github_pat_...)
+   • API keys, passwords, or credentials
+   • Base64-encoded secrets
+
+✅ CURRENT ARCHITECTURE:
+   • Workflow trigger token in browser localStorage only
+   • Commits handled by GitHub Actions workflow
+   • Token never appears in code
+
+🚨 IF TOKEN IN FILE: DO NOT COMMIT. Remove immediately and rotate token.
+
+This is a PUBLIC repository.
+═══════════════════════════════════════════════════════════════
+-->
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -530,9 +550,28 @@
         const GITHUB_REPO = 'Wellness-Plan-Estimates';    // Repository name
         const GITHUB_API = 'https://api.github.com';
 
-        // Authentication credentials (obfuscated)
-        const GITHUB_TOKEN = atob('Z2hwX2hWVlRFSEtuOEcxUGtpcjl0VGVFNk9pOXRhYmFzMjBlQUd2ZQ==');
+        // Workflow trigger token (admin configures once, stored in localStorage)
+        function getWorkflowToken() {
+            return localStorage.getItem('workflow_trigger_token') || '';
+        }
         const PASSWORD_HASH = '81140101981a72c287f3d39c659410b9448d4d8260e3ea1fd539feb488877610';
+
+        function setupWorkflowToken() {
+            const token = prompt(
+                '🔧 One-Time Setup: Workflow Trigger Token\n\n' +
+                'Paste the fine-grained PAT (starts with "github_pat_"):\n\n' +
+                'This only needs to be done once.\n\n' +
+                'See ADMIN_SETUP.md for instructions.'
+            );
+
+            if (token && token.trim().startsWith('github_pat_')) {
+                localStorage.setItem('workflow_trigger_token', token.trim());
+                showToast('✅ Setup complete! Token saved securely.', 'success');
+                setTimeout(() => location.reload(), 1500);
+            } else if (token) {
+                showToast('❌ Invalid token format. Must start with "github_pat_"', 'error');
+            }
+        }
 
         let isAuthenticated = sessionStorage.getItem('adminAuth') === 'true';
         let plansData = null;
@@ -760,41 +799,85 @@
 
         async function commitChanges(message) {
             try {
-                showToast('Saving changes...', 'info');
+                // Check if workflow token configured (admin does this once)
+                const workflowToken = getWorkflowToken();
+                if (!workflowToken) {
+                    const setup = confirm(
+                        'First-time setup required.\n\n' +
+                        'Configure workflow trigger token?\n\n' +
+                        '(Only needed once - see ADMIN_SETUP.md for instructions)'
+                    );
+                    if (setup) {
+                        setupWorkflowToken();
+                    }
+                    return;
+                }
+
+                showToast('💾 Saving changes...', 'info');
 
                 // Update metadata
                 plansData.metadata.lastUpdated = new Date().toISOString();
+                plansData.metadata.version = '2026.2';
 
-                // Prepare commit
-                const content = btoa(JSON.stringify(plansData, null, 2));
-
-                const response = await fetch(`${GITHUB_API}/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/wellness-plans-data/plans.json`, {
-                    method: 'PUT',
-                    headers: {
-                        'Authorization': `token ${GITHUB_TOKEN}`,
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        message: message,
-                        content: content,
-                        sha: currentFileSHA
-                    })
-                });
+                // Trigger GitHub Actions workflow
+                const response = await fetch(
+                    `${GITHUB_API}/repos/${GITHUB_OWNER}/${GITHUB_REPO}/dispatches`,
+                    {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${workflowToken}`,
+                            'Accept': 'application/vnd.github.v3+json',
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            event_type: 'update-pricing',
+                            client_payload: {
+                                data: plansData,
+                                commit_message: message,
+                                timestamp: new Date().toISOString()
+                            }
+                        })
+                    }
+                );
 
                 if (!response.ok) {
-                    const error = await response.json();
-                    throw new Error(error.message || 'Failed to commit changes');
+                    if (response.status === 401 || response.status === 403) {
+                        throw new Error('Token expired or invalid. Please reconfigure.');
+                    }
+                    const errorText = await response.text();
+                    throw new Error(`GitHub API error: ${response.status} - ${errorText}`);
                 }
 
-                const result = await response.json();
-                currentFileSHA = result.content.sha;
+                showToast(
+                    '✅ Changes submitted!\n\n' +
+                    'Workflow is processing...\n' +
+                    'Updates will appear in 30-60 seconds.',
+                    'success'
+                );
 
-                showToast('Changes saved successfully!', 'success');
-                renderUI();
+                // Wait for workflow to complete, then refresh
+                setTimeout(async () => {
+                    showToast('🔄 Refreshing data...', 'info');
+                    await loadPlansData();
+                    showToast('🎉 Pricing updated! Reloading interface...', 'success');
+                    setTimeout(() => location.reload(), 2000);
+                }, 15000);
+
             } catch (error) {
-                showToast('Failed to save: ' + error.message, 'error');
-                // Reload to reset state
-                await loadPlansData();
+                console.error('Save failed:', error);
+                showToast('❌ Failed: ' + error.message, 'error');
+
+                if (error.message.includes('Token')) {
+                    const retry = confirm(
+                        'Token issue detected.\n\n' +
+                        'Reconfigure workflow token?\n\n' +
+                        '(See ADMIN_SETUP.md for instructions)'
+                    );
+                    if (retry) {
+                        localStorage.removeItem('workflow_trigger_token');
+                        setupWorkflowToken();
+                    }
+                }
             }
         }
 

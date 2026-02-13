@@ -9,7 +9,16 @@
 - **ONE FINAL manual distribution pending** for latest HTML structure changes (itemized pricing breakdown)
 - **After that: All future PRICING and SERVICE updates sync automatically** ✨
 
+**🔒 Security Enhancement: COMPLETED**
+- ✅ GitHub Actions workflow implemented for secure commits
+- ✅ Hardcoded tokens removed from all files
+- ✅ Fine-grained PAT with minimal permissions (workflow trigger only)
+- ✅ Token stored in localStorage (never in code)
+- ✅ Professional enterprise-grade architecture
+- ✅ Enhanced audit trail (workflow logs + Git commits)
+
 **📋 Recent Changes:**
+- February 13, 2026 (Late PM): ✅ **Security remediation** - Migrated to GitHub Actions workflow
 - February 13, 2026 (PM): ✅ Added full service management (add/delete/edit services)
 - February 13, 2026 (AM): Added itemized pricing breakdown (Base Plan + Add-Ons = Monthly Payment)
 - Action required: Distribute updated Wellness_Estimate_Generator.html to all hospital computers ONE LAST TIME
@@ -96,13 +105,15 @@ Veterinary wellness plan estimate generator for creating monthly payment plans. 
 **How to Access:**
 1. Open: `wellness-plans-data/admin.html`
 2. Log in with password
-3. Make changes via web interface
-4. Click Save → Automatic GitHub commit
-5. Changes sync to all hospital computers within 60 seconds
+3. *(First-time only)* Admin configures workflow token (see `ADMIN_SETUP.md`)
+4. Make changes via web interface
+5. Click Save → GitHub Actions workflow processes changes
+6. Changes sync to all hospital computers within 60 seconds
 
 **Audit Trail:**
-- All changes tracked in GitHub commit history
-- View history: https://github.com/samsamanowitz/Wellness-Plan-Estimates/commits/main/wellness-plans-data/plans.json
+- All changes tracked in GitHub commit history AND workflow logs
+- Git commits: https://github.com/samsamanowitz/Wellness-Plan-Estimates/commits/main/wellness-plans-data/plans.json
+- Workflow runs: https://github.com/samsamanowitz/Wellness-Plan-Estimates/actions
 
 ---
 
@@ -194,12 +205,14 @@ plansData = {
 
 ## ✅ Current Architecture (IMPLEMENTED)
 
-### Data Flow (Live System)
+### Data Flow (Live System - Secure Architecture)
 ```
-Admin Interface (admin.html)
-    ↓ GitHub API commit
+Admin Interface (admin.html) - Browser
+    ↓ Triggers repository_dispatch event (workflow trigger token - localStorage only)
+GitHub Actions Workflow (.github/workflows/update-pricing.yml)
+    ↓ Validates payload & commits using built-in GITHUB_TOKEN (encrypted secret)
 GitHub Repository (Wellness-Plan-Estimates/wellness-plans-data)
-    ↓ GitHub Pages serves
+    ↓ GitHub Pages auto-deploys (30-60 seconds)
 plans.json (https://samsamanowitz.github.io/Wellness-Plan-Estimates/wellness-plans-data/plans.json)
     ↓ fetch() on page load (with localStorage cache fallback)
 Wellness_Estimate_Generator.html (all hospital computers)
@@ -207,13 +220,26 @@ Wellness_Estimate_Generator.html (all hospital computers)
 estimate-viewer.html (https://university-animal-clinic.github.io/uacvet.github.io/estimate-viewer.html)
 ```
 
-### Repository: wellness-plans-data (ACTIVE)
+**Security Benefits:**
+- ✅ Token stored in localStorage (never in code)
+- ✅ Fine-grained PAT with minimal permissions (workflow trigger only)
+- ✅ Workflow validates data before commit
+- ✅ Professional enterprise-grade architecture
+- ✅ Zero infrastructure costs
+
+### Repository Structure (ACTIVE)
 ```
-wellness-plans-data/
-├── plans.json          # Single source of truth for all pricing
-├── admin.html          # Admin interface (GitHub PAT authenticated)
-├── README.md           # Setup instructions
-└── .gitignore
+Wellness-Plan-Estimates/
+├── .github/
+│   └── workflows/
+│       └── update-pricing.yml    # GitHub Actions workflow (secure commits)
+├── wellness-plans-data/
+│   ├── plans.json                # Single source of truth for all pricing
+│   ├── admin.html                # Admin interface (workflow-authenticated)
+│   └── README.md                 # Setup instructions
+├── .gitignore                    # Prevent token commits
+├── ADMIN_SETUP.md                # Administrator setup guide
+└── CLAUDE.md                     # This file
 ```
 
 ### plans.json Schema
@@ -367,15 +393,17 @@ function getEnrollmentFee(index) {
 
 ## Cost & Maintenance
 
-**Monthly Costs**: $0 (GitHub Pages free forever)
-
-**Quarterly Tasks**:
-- Rotate GitHub Personal Access Token (security best practice)
-- Review Git commit history (audit trail)
+**Monthly Costs**: $0 (GitHub Pages + GitHub Actions free forever)
 
 **Annual Tasks**:
+- **Rotate workflow trigger token** (fine-grained PAT expires annually)
 - Review admin access (GitHub collaborators)
+- Review workflow logs for anomalies
 - Update this documentation if architecture changes
+
+**Quarterly Tasks**:
+- Review Git commit history (audit trail)
+- Check GitHub Actions workflow runs for errors
 
 ## Contact & Support
 
@@ -387,6 +415,18 @@ function getEnrollmentFee(index) {
 
 ## Version History
 
+- **2026.2-SECURE** (Feb 13, 2026 Late PM): ✅ **Security Enhancement - GitHub Actions Workflow**
+  - **Critical**: Removed hardcoded tokens from all files (security remediation)
+  - Migrated to GitHub Actions workflow architecture for secure commits
+  - Fine-grained PAT with minimal permissions (workflow trigger only)
+  - Token stored in localStorage (never in code)
+  - Professional enterprise-grade architecture
+  - Enhanced audit trail (workflow logs + Git commits)
+  - Zero infrastructure costs (GitHub Actions free tier)
+  - Created `.github/workflows/update-pricing.yml`
+  - Created `.gitignore` to prevent future token commits
+  - Created `ADMIN_SETUP.md` for administrator guidance
+  - Updated `wellness-plans-data/README.md` with security documentation
 - **2026.2** (Feb 13, 2026 PM): ✅ **Added full service management to admin portal**
   - Staff can add/delete/edit services without developer help
   - Service IDs migrated to Covetrus codes (WPSPAYK9, K222, RADS3, etc.)

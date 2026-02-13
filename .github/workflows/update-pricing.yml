@@ -1,0 +1,53 @@
+name: Update Wellness Plan Pricing
+
+on:
+  repository_dispatch:
+    types: [update-pricing]
+
+permissions:
+  contents: write
+
+jobs:
+  update-pricing-data:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Validate payload structure
+        run: |
+          echo "🔍 Validating pricing data..."
+          echo '${{ toJson(github.event.client_payload.data) }}' > /tmp/payload.json
+
+          if ! jq -e '.plans' /tmp/payload.json > /dev/null; then
+            echo "❌ Missing required field: plans"
+            exit 1
+          fi
+
+          if ! jq -e '.settings' /tmp/payload.json > /dev/null; then
+            echo "❌ Missing required field: settings"
+            exit 1
+          fi
+
+          echo "✅ Validation passed"
+
+      - name: Update plans.json
+        run: |
+          echo "📝 Writing new pricing data..."
+          echo '${{ toJson(github.event.client_payload.data) }}' | \
+            jq '.' > wellness-plans-data/plans.json
+
+      - name: Commit and push
+        run: |
+          git config user.name "Wellness Plans Bot"
+          git config user.email "wellness-bot@github-actions"
+          git add wellness-plans-data/plans.json
+          git commit -m "${{ github.event.client_payload.commit_message }}"
+          git push
+
+          echo "✅ Changes committed successfully"
+
+      - name: Summary
+        if: success()
+        run: echo "🎉 Pricing update complete! Live on GitHub Pages in 30-60 seconds."

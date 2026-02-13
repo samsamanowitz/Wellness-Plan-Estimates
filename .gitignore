@@ -1,0 +1,32 @@
+# ═══════════════════════════════════════════════════════════
+# Wellness Plan Estimates - Prevent Token Commits
+# ═══════════════════════════════════════════════════════════
+
+# Sensitive files - NEVER COMMIT
+*.env
+*.env.*
+*_with_token.html
+*-token.html
+*_TOKEN.html
+config.local.*
+credentials.*
+secrets.*
+*_TEMP.html
+*_LOCAL.html
+*_DEBUG.html
+
+# OS files
+.DS_Store
+Thumbs.db
+._*
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Backups
+*.backup
+*.bak
+*~
