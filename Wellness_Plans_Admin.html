@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wellness Plans Admin</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 16px;
+        }
+
+        .login-section {
+            padding: 40px;
+            text-align: center;
+        }
+
+        .login-section h2 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .login-section p {
+            color: #666;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .login-section input {
+            width: 100%;
+            max-width: 500px;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: monospace;
+            margin-bottom: 20px;
+        }
+
+        .login-section input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            margin-left: 10px;
+        }
+
+        .btn-small {
+            padding: 8px 16px;
+            font-size: 14px;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+        }
+
+        .content {
+            padding: 40px;
+            display: none;
+        }
+
+        .content.active {
+            display: block;
+        }
+
+        .section {
+            margin-bottom: 40px;
+            padding: 30px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .section h2 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 24px;
+        }
+
+        .section-subtitle {
+            color: #666;
+            margin-bottom: 25px;
+            font-size: 14px;
+        }
+
+        .setting-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 15px;
+            background: white;
+            border-radius: 6px;
+        }
+
+        .setting-row label {
+            flex: 1;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .setting-row input {
+            width: 120px;
+            padding: 8px 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 16px;
+            margin: 0 10px;
+        }
+
+        .setting-row input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .plan-card {
+            background: white;
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .plan-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .plan-header h3 {
+            color: #333;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .plan-icon {
+            font-size: 24px;
+        }
+
+        .base-cost {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+
+        .base-cost label {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .base-cost input {
+            width: 120px;
+            padding: 8px 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .services-section {
+            margin-top: 20px;
+        }
+
+        .services-section h4 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .service-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            gap: 15px;
+        }
+
+        .service-item.optional {
+            background: #fff3cd;
+        }
+
+        .service-name {
+            flex: 1;
+            color: #333;
+        }
+
+        .service-detail {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .service-cost {
+            font-weight: 600;
+            color: #28a745;
+            min-width: 80px;
+            text-align: right;
+        }
+
+        .service-qty {
+            min-width: 80px;
+            text-align: center;
+            color: #666;
+            font-size: 13px;
+        }
+
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 500;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .toast.success {
+            background: #28a745;
+        }
+
+        .toast.error {
+            background: #dc3545;
+        }
+
+        .toast.info {
+            background: #17a2b8;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 0.8s linear infinite;
+            vertical-align: middle;
+            margin-right: 8px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .toolbar-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #28a745;
+        }
+
+        .link {
+            color: #667eea;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .link:hover {
+            text-decoration: underline;
+        }
+
+        .help-text {
+            color: #666;
+            font-size: 13px;
+            margin-top: 10px;
+            font-style: italic;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-content h3 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .modal-content input,
+        .modal-content textarea {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            font-family: inherit;
+        }
+
+        .modal-content label {
+            display: block;
+            margin-bottom: 5px;
+            color: #666;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .includes-note {
+            color: #666;
+            font-size: 12px;
+            font-style: italic;
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🐾 Wellness Plans Admin</h1>
+            <p>Manage pricing and services for all wellness plans</p>
+        </div>
+
+        <div class="login-section" id="loginSection">
+            <h2>GitHub Authentication Required</h2>
+            <p>
+                Enter your GitHub Personal Access Token to manage wellness plan pricing.<br>
+                <a href="https://github.com/settings/tokens" target="_blank" class="link">Generate a token here</a> with <code>repo</code> scope.
+            </p>
+            <input type="password" id="tokenInput" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx">
+            <br>
+            <button class="btn" onclick="login()">Login</button>
+        </div>
+
+        <div class="toolbar" id="toolbar">
+            <div class="toolbar-left">
+                <div class="status-indicator">
+                    <span class="status-dot"></span>
+                    <span id="statusText">Connected</span>
+                </div>
+                <span id="lastUpdated" style="color: #999; font-size: 13px;"></span>
+            </div>
+            <div>
+                <a href="#" class="link" id="auditLogLink" target="_blank">View Audit Log</a>
+                <button class="btn btn-secondary btn-small" onclick="logout()">Logout</button>
+            </div>
+        </div>
+
+        <div class="content" id="mainContent">
+            <div class="section">
+                <h2>⚙️ Global Settings</h2>
+                <p class="section-subtitle">Enrollment fees applied to all plans</p>
+
+                <div class="setting-row">
+                    <label>First Pet Enrollment Fee</label>
+                    <span style="font-size: 20px;">$</span>
+                    <input type="number" id="enrollmentFeeFirst" step="0.01" min="0">
+                    <button class="btn btn-small" onclick="saveSetting('enrollmentFeeFirst')">Save</button>
+                </div>
+
+                <div class="setting-row">
+                    <label>Additional Pet Enrollment Fee</label>
+                    <span style="font-size: 20px;">$</span>
+                    <input type="number" id="enrollmentFeeAdditional" step="0.01" min="0">
+                    <button class="btn btn-small" onclick="saveSetting('enrollmentFeeAdditional')">Save</button>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>🐕 Canine Plans</h2>
+                <div id="caninePlans"></div>
+            </div>
+
+            <div class="section">
+                <h2>🐈 Feline Plans</h2>
+                <div id="felinePlans"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="editServiceModal">
+        <div class="modal-content">
+            <h3 id="modalTitle">Edit Service</h3>
+            <label>Service Name</label>
+            <input type="text" id="modalServiceName">
+
+            <label>Monthly Cost ($)</label>
+            <input type="number" id="modalServiceCost" step="0.01" min="0">
+
+            <label>Quantity</label>
+            <input type="text" id="modalServiceQty">
+
+            <label>Includes Note (optional)</label>
+            <input type="text" id="modalServiceNote" placeholder="e.g., Includes Pre-Op Blood Panel">
+
+            <div class="modal-actions">
+                <button class="btn btn-secondary btn-small" onclick="closeModal()">Cancel</button>
+                <button class="btn btn-small" onclick="saveServiceEdit()">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configuration - UPDATE THESE VALUES
+        const GITHUB_OWNER = 'samsamanowitz';  // Replace with your GitHub username or org
+        const GITHUB_REPO = 'Wellness-Plan-Estimates';    // Repository name
+        const GITHUB_API = 'https://api.github.com';
+
+        let githubToken = localStorage.getItem('githubToken');
+        let plansData = null;
+        let currentFileSHA = null;
+        let editingService = null;
+
+        async function login() {
+            const token = document.getElementById('tokenInput').value.trim();
+            if (!token) {
+                showToast('Please enter your GitHub token', 'error');
+                return;
+            }
+
+            // Test the token by fetching plans.json
+            try {
+                const response = await fetch(`${GITHUB_API}/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/wellness-plans-data/plans.json`, {
+                    headers: { 'Authorization': `token ${token}` }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Invalid token or repository not found');
+                }
+
+                githubToken = token;
+                localStorage.setItem('githubToken', token);
+                await loadPlansData();
+                showMainContent();
+                showToast('Successfully logged in!', 'success');
+            } catch (error) {
+                showToast('Login failed: ' + error.message, 'error');
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('githubToken');
+            githubToken = null;
+            document.getElementById('loginSection').style.display = 'block';
+            document.getElementById('toolbar').style.display = 'none';
+            document.getElementById('mainContent').classList.remove('active');
+            document.getElementById('tokenInput').value = '';
+        }
+
+        function showMainContent() {
+            document.getElementById('loginSection').style.display = 'none';
+            document.getElementById('toolbar').style.display = 'flex';
+            document.getElementById('mainContent').classList.add('active');
+        }
+
+        async function loadPlansData() {
+            try {
+                const response = await fetch(`${GITHUB_API}/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/wellness-plans-data/plans.json`, {
+                    headers: { 'Authorization': `token ${githubToken}` }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch plans.json');
+                }
+
+                const fileData = await response.json();
+                currentFileSHA = fileData.sha;
+                plansData = JSON.parse(atob(fileData.content));
+
+                renderUI();
+                updateAuditLogLink();
+            } catch (error) {
+                showToast('Failed to load plans: ' + error.message, 'error');
+            }
+        }
+
+        function renderUI() {
+            // Update settings
+            document.getElementById('enrollmentFeeFirst').value = plansData.settings.enrollmentFeeFirst;
+            document.getElementById('enrollmentFeeAdditional').value = plansData.settings.enrollmentFeeAdditional;
+
+            // Update last updated time
+            const lastUpdated = new Date(plansData.metadata.lastUpdated);
+            document.getElementById('lastUpdated').textContent = `Last updated: ${lastUpdated.toLocaleString()}`;
+
+            // Render canine plans
+            const caninePlansHTML = ['puppy', 'canineAdult']
+                .map(key => renderPlanCard(key, plansData.plans[key]))
+                .join('');
+            document.getElementById('caninePlans').innerHTML = caninePlansHTML;
+
+            // Render feline plans
+            const felinePlansHTML = ['kitten', 'felineAdult']
+                .map(key => renderPlanCard(key, plansData.plans[key]))
+                .join('');
+            document.getElementById('felinePlans').innerHTML = felinePlansHTML;
+        }
+
+        function renderPlanCard(planKey, plan) {
+            const icon = plan.species === 'canine' ? '🐕' : '🐈';
+
+            const includedHTML = plan.included.map(service => `
+                <div class="service-item">
+                    <div class="service-name">${service.name}</div>
+                    <div class="service-qty">${service.qty || 'N/A'}</div>
+                </div>
+            `).join('');
+
+            const optionalHTML = plan.optional.map(service => `
+                <div class="service-item optional">
+                    <div class="service-name">
+                        ${service.name}
+                        ${service.includesNote ? `<span class="includes-note">(${service.includesNote})</span>` : ''}
+                    </div>
+                    <div class="service-detail">
+                        <span class="service-qty">Qty: ${service.qty}</span>
+                        <span class="service-cost">$${service.cost.toFixed(2)}/mo</span>
+                    </div>
+                    <button class="btn btn-small" onclick="editOptionalService('${planKey}', '${service.id}')">Edit</button>
+                </div>
+            `).join('');
+
+            return `
+                <div class="plan-card">
+                    <div class="plan-header">
+                        <h3><span class="plan-icon">${icon}</span> ${plan.displayName}</h3>
+                    </div>
+
+                    <div class="base-cost">
+                        <label>Monthly Base Cost:</label>
+                        <span style="font-size: 20px;">$</span>
+                        <input type="number" id="${planKey}_baseCost" value="${plan.baseCost.toFixed(2)}" step="0.01" min="0">
+                        <button class="btn btn-small" onclick="saveBaseCost('${planKey}')">Save</button>
+                    </div>
+
+                    <div class="services-section">
+                        <h4>Included Services</h4>
+                        ${includedHTML}
+                        <p class="help-text">Contact developer to modify included services</p>
+                    </div>
+
+                    <div class="services-section">
+                        <h4>
+                            Optional Services
+                        </h4>
+                        ${optionalHTML}
+                        <p class="help-text">Click Edit to modify optional service pricing</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        async function saveBaseCost(planKey) {
+            const input = document.getElementById(`${planKey}_baseCost`);
+            const newCost = parseFloat(input.value);
+
+            if (isNaN(newCost) || newCost < 0) {
+                showToast('Invalid cost value', 'error');
+                return;
+            }
+
+            const oldCost = plansData.plans[planKey].baseCost;
+            plansData.plans[planKey].baseCost = newCost;
+
+            const commitMessage = `Update ${plansData.plans[planKey].displayName} base cost from $${oldCost.toFixed(2)} to $${newCost.toFixed(2)}`;
+            await commitChanges(commitMessage);
+        }
+
+        async function saveSetting(settingKey) {
+            const input = document.getElementById(settingKey);
+            const newValue = parseFloat(input.value);
+
+            if (isNaN(newValue) || newValue < 0) {
+                showToast('Invalid value', 'error');
+                return;
+            }
+
+            const oldValue = plansData.settings[settingKey];
+            plansData.settings[settingKey] = newValue;
+
+            const settingName = settingKey === 'enrollmentFeeFirst' ? 'First Pet Enrollment Fee' : 'Additional Pet Enrollment Fee';
+            const commitMessage = `Update ${settingName} from $${oldValue.toFixed(2)} to $${newValue.toFixed(2)}`;
+            await commitChanges(commitMessage);
+        }
+
+        function editOptionalService(planKey, serviceId) {
+            editingService = { planKey, serviceId };
+            const service = plansData.plans[planKey].optional.find(s => s.id === serviceId);
+
+            document.getElementById('modalTitle').textContent = 'Edit Optional Service';
+            document.getElementById('modalServiceName').value = service.name;
+            document.getElementById('modalServiceCost').value = service.cost;
+            document.getElementById('modalServiceQty').value = service.qty;
+            document.getElementById('modalServiceNote').value = service.includesNote || '';
+
+            document.getElementById('editServiceModal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('editServiceModal').classList.remove('active');
+            editingService = null;
+        }
+
+        async function saveServiceEdit() {
+            if (!editingService) return;
+
+            const { planKey, serviceId } = editingService;
+            const service = plansData.plans[planKey].optional.find(s => s.id === serviceId);
+
+            const newName = document.getElementById('modalServiceName').value;
+            const newCost = parseFloat(document.getElementById('modalServiceCost').value);
+            const newQty = document.getElementById('modalServiceQty').value;
+            const newNote = document.getElementById('modalServiceNote').value;
+
+            if (!newName || isNaN(newCost) || newCost < 0) {
+                showToast('Invalid service data', 'error');
+                return;
+            }
+
+            const oldCost = service.cost;
+            service.name = newName;
+            service.cost = newCost;
+            service.qty = parseInt(newQty) || 1;
+            service.includesNote = newNote || undefined;
+
+            const commitMessage = `Update ${plansData.plans[planKey].displayName} - ${newName} from $${oldCost.toFixed(2)} to $${newCost.toFixed(2)}`;
+            await commitChanges(commitMessage);
+            closeModal();
+        }
+
+        async function commitChanges(message) {
+            try {
+                showToast('Saving changes...', 'info');
+
+                // Update metadata
+                plansData.metadata.lastUpdated = new Date().toISOString();
+
+                // Prepare commit
+                const content = btoa(JSON.stringify(plansData, null, 2));
+
+                const response = await fetch(`${GITHUB_API}/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/wellness-plans-data/plans.json`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `token ${githubToken}`,
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        message: message,
+                        content: content,
+                        sha: currentFileSHA
+                    })
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.message || 'Failed to commit changes');
+                }
+
+                const result = await response.json();
+                currentFileSHA = result.content.sha;
+
+                showToast('Changes saved successfully!', 'success');
+                renderUI();
+            } catch (error) {
+                showToast('Failed to save: ' + error.message, 'error');
+                // Reload to reset state
+                await loadPlansData();
+            }
+        }
+
+        function updateAuditLogLink() {
+            const link = `https://github.com/${GITHUB_OWNER}/${GITHUB_REPO}/commits/main/wellness-plans-data/plans.json`;
+            document.getElementById('auditLogLink').href = link;
+        }
+
+        function showToast(message, type) {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.animation = 'slideIn 0.3s ease-out reverse';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // Initialize on page load
+        window.addEventListener('DOMContentLoaded', function() {
+            if (githubToken) {
+                loadPlansData().then(showMainContent);
+            }
+        });
+    </script>
+</body>
+</html>
