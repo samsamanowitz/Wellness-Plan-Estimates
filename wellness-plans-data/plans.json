@@ -74,12 +74,6 @@
           "name": "WP Radiograph (3 Views)",
           "cost": 20.33,
           "qty": 1
-        },
-        {
-          "id": "TEST",
-          "name": "Test",
-          "cost": 5,
-          "qty": 1
         }
       ]
     },
@@ -344,7 +338,7 @@
     "enrollmentFeeAdditional": 40
   },
   "metadata": {
-    "lastUpdated": "2026-02-13T19:00:08.747Z",
+    "lastUpdated": "2026-02-13T19:02:16.869Z",
     "version": "2026.2"
   }
 }
