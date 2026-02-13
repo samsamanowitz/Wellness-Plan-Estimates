@@ -855,6 +855,12 @@
             font-weight: 600;
         }
 
+        .pet-summary-row.breakdown-total {
+            border-top: 1px solid var(--gray-300);
+            padding-top: 8px;
+            margin-top: 4px;
+        }
+
         /* Grand Total Summary */
         .grand-summary {
             background: linear-gradient(135deg, var(--gray-light) 0%, var(--gray-100) 100%);
@@ -1281,6 +1287,12 @@
                 font-family: Helvetica, Arial, sans-serif;
                 font-weight: 600;
                 color: #000 !important;
+            }
+
+            .pet-summary-row.breakdown-total {
+                border-top: 0.5pt solid #000;
+                padding-top: 5pt;
+                margin-top: 4pt;
             }
 
             /* ===== GRAND TOTAL - Compact ===== */
@@ -1997,6 +2009,25 @@ UklGRnJrAQBXRUJQVlA4WAoAAAAwAAAAzwcA7gMASUNDUMgBAAAAAAHIAAAAAAQwAABtbnRyUkdCIFhZ
             return species || '';
         }
 
+        function calculatePetBreakdown(pet) {
+            let optionalsCost = 0;
+            if (pet.selectedOptionals) {
+                optionalsCost = Object.values(pet.selectedOptionals).reduce(function(sum, opt) {
+                    return sum + opt.cost;
+                }, 0);
+            }
+
+            const plan = plansData[pet.planKey];
+            const baseCost = plan ? plan.baseCost : 0;
+            const total = baseCost + optionalsCost;
+
+            return {
+                base: baseCost,
+                optionals: optionalsCost,
+                total: total
+            };
+        }
+
         function calculatePetTotal(pet, index) {
             if (!pet.planKey) return { monthly: 0, annual: 0, enrollment: 0, total: 0 };
 
@@ -2107,14 +2138,24 @@ UklGRnJrAQBXRUJQVlA4WAoAAAAwAAAAzwcA7gMASUNDUMgBAAAAAAHIAAAAAAQwAABtbnRyUkdCIFhZ
                         '</div>';
 
             if (plan) {
+                const breakdown = calculatePetBreakdown(pet);
+
                 html += '<div class="optional-services-section">' +
                     '<div class="optional-services-title">Optional Services</div>' +
                     '<div class="optional-services-grid">' + optionalServicesHtml + '</div>' +
                 '</div>' +
                 '<div class="pet-subtotal">' +
                     '<div class="pet-subtotal-item">' +
+                        '<div class="pet-subtotal-label">Base Plan</div>' +
+                        '<div class="pet-subtotal-value">$' + breakdown.base.toFixed(2) + '</div>' +
+                    '</div>' +
+                    '<div class="pet-subtotal-item">' +
+                        '<div class="pet-subtotal-label">Add-Ons</div>' +
+                        '<div class="pet-subtotal-value">$' + breakdown.optionals.toFixed(2) + '</div>' +
+                    '</div>' +
+                    '<div class="pet-subtotal-item">' +
                         '<div class="pet-subtotal-label">Monthly</div>' +
-                        '<div class="pet-subtotal-value">$' + petTotals.monthly.toFixed(2) + '</div>' +
+                        '<div class="pet-subtotal-value highlight">$' + petTotals.monthly.toFixed(2) + '</div>' +
                     '</div>' +
                     '<div class="pet-subtotal-item">' +
                         '<div class="pet-subtotal-label">Annual</div>' +
@@ -2276,6 +2317,8 @@ UklGRnJrAQBXRUJQVlA4WAoAAAAwAAAAzwcA7gMASUNDUMgBAAAAAAHIAAAAAAQwAABtbnRyUkdCIFhZ
                     optionalHtml = '<li class="service-item" style="color: var(--gray-400);"><em>No optional services selected</em></li>';
                 }
 
+                const breakdown = calculatePetBreakdown(pet);
+
                 return '<div class="pet-estimate-section ' + (displayIndex > 0 ? 'page-break' : '') + '">' +
                     '<div class="pet-estimate-header">' +
                         '<span class="pet-estimate-icon">' + speciesIcon + '</span>' +
@@ -2294,8 +2337,16 @@ UklGRnJrAQBXRUJQVlA4WAoAAAAwAAAAzwcA7gMASUNDUMgBAAAAAAHIAAAAAAQwAABtbnRyUkdCIFhZ
                     '</div>' +
                     '<div class="pet-summary">' +
                         '<div class="pet-summary-row">' +
+                            '<span class="pet-summary-label">Base Plan:</span>' +
+                            '<span class="pet-summary-value">$' + breakdown.base.toFixed(2) + '/mo</span>' +
+                        '</div>' +
+                        '<div class="pet-summary-row">' +
+                            '<span class="pet-summary-label">Optional Add-Ons:</span>' +
+                            '<span class="pet-summary-value">$' + breakdown.optionals.toFixed(2) + '/mo</span>' +
+                        '</div>' +
+                        '<div class="pet-summary-row breakdown-total">' +
                             '<span class="pet-summary-label">Monthly Payment:</span>' +
-                            '<span class="pet-summary-value">$' + petTotals.monthly.toFixed(2) + '</span>' +
+                            '<span class="pet-summary-value">$' + petTotals.monthly.toFixed(2) + '/mo</span>' +
                         '</div>' +
                         '<div class="pet-summary-row">' +
                             '<span class="pet-summary-label">Annual Cost (12 months):</span>' +
@@ -2374,8 +2425,11 @@ UklGRnJrAQBXRUJQVlA4WAoAAAAwAAAAzwcA7gMASUNDUMgBAAAAAAHIAAAAAAQwAABtbnRyUkdCIFhZ
                     body += '\n';
                 }
 
-                body += 'Monthly: $' + petTotals.monthly.toFixed(2) + '\n';
-                body += 'Annual: $' + petTotals.annual.toFixed(2) + '\n';
+                const breakdown = calculatePetBreakdown(pet);
+                body += 'Base Plan: $' + breakdown.base.toFixed(2) + '/mo\n';
+                body += 'Optional Add-Ons: $' + breakdown.optionals.toFixed(2) + '/mo\n';
+                body += 'Monthly Payment: $' + petTotals.monthly.toFixed(2) + '/mo\n';
+                body += 'Annual Cost: $' + petTotals.annual.toFixed(2) + '\n';
                 body += 'Enrollment Fee (' + enrollmentLabel + '): $' + petTotals.enrollment.toFixed(2) + '\n';
                 body += 'Pet Total: $' + petTotals.total.toFixed(2) + '\n\n';
             });

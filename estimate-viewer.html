@@ -293,6 +293,12 @@
             font-weight: 600;
         }
 
+        .pet-summary-row.breakdown-total {
+            border-top: 1px solid #ddd;
+            padding-top: 8px;
+            margin-top: 4px;
+        }
+
         /* Grand Total Summary */
         .grand-summary {
             background: linear-gradient(135deg, var(--gray-light) 0%, var(--gray-100) 100%);
@@ -765,6 +771,22 @@
             return '$' + amount.toFixed(2);
         }
 
+        function calculatePetBreakdown(pet) {
+            let optionalsCost = 0;
+            if (pet.optionals && pet.optionals.length > 0) {
+                optionalsCost = pet.optionals.reduce(function(sum, opt) {
+                    return sum + opt.cost;
+                }, 0);
+            }
+            const baseCost = pet.monthly - optionalsCost;
+
+            return {
+                base: baseCost,
+                optionals: optionalsCost,
+                total: pet.monthly
+            };
+        }
+
         function renderEstimate(data) {
             const content = document.getElementById('content');
 
@@ -803,6 +825,8 @@
                     optionalHtml = '<li class="service-item" style="color: var(--gray-400);"><em>No optional services selected</em></li>';
                 }
 
+                const breakdown = calculatePetBreakdown(pet);
+
                 petsHtml += `
                     <div class="pet-estimate-section">
                         <div class="pet-estimate-header">
@@ -826,8 +850,16 @@
                         </div>
                         <div class="pet-summary">
                             <div class="pet-summary-row">
+                                <span class="pet-summary-label">Base Plan:</span>
+                                <span class="pet-summary-value">${formatCurrency(breakdown.base)}/mo</span>
+                            </div>
+                            <div class="pet-summary-row">
+                                <span class="pet-summary-label">Optional Add-Ons:</span>
+                                <span class="pet-summary-value">${formatCurrency(breakdown.optionals)}/mo</span>
+                            </div>
+                            <div class="pet-summary-row breakdown-total">
                                 <span class="pet-summary-label">Monthly Payment:</span>
-                                <span class="pet-summary-value">${formatCurrency(pet.monthly)}</span>
+                                <span class="pet-summary-value">${formatCurrency(pet.monthly)}/mo</span>
                             </div>
                             <div class="pet-summary-row">
                                 <span class="pet-summary-label">Annual Cost (12 months):</span>
