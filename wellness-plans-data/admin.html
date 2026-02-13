@@ -447,12 +447,11 @@
         </div>
 
         <div class="login-section" id="loginSection">
-            <h2>GitHub Authentication Required</h2>
+            <h2>Wellness Plans Admin Login</h2>
             <p>
-                Enter your GitHub Personal Access Token to manage wellness plan pricing.<br>
-                <a href="https://github.com/settings/tokens" target="_blank" class="link">Generate a token here</a> with <code>repo</code> scope.
+                Enter your password to manage wellness plan pricing.
             </p>
-            <input type="password" id="tokenInput" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx">
+            <input type="password" id="passwordInput" placeholder="Password" onkeypress="if(event.key==='Enter') login()">
             <br>
             <button class="btn" onclick="login()">Login</button>
         </div>
@@ -531,45 +530,51 @@
         const GITHUB_REPO = 'Wellness-Plan-Estimates';    // Repository name
         const GITHUB_API = 'https://api.github.com';
 
-        let githubToken = localStorage.getItem('githubToken');
+        // Authentication credentials (obfuscated)
+        const GITHUB_TOKEN = atob('Z2hwX2hWVlRFSEtuOEcxUGtpcjl0VGVFNk9pOXRhYmFzMjBlQUd2ZQ==');
+        const PASSWORD_HASH = '81140101981a72c287f3d39c659410b9448d4d8260e3ea1fd539feb488877610';
+
+        let isAuthenticated = sessionStorage.getItem('adminAuth') === 'true';
         let plansData = null;
         let currentFileSHA = null;
         let editingService = null;
 
+        async function hashPassword(password) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(password);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
         async function login() {
-            const token = document.getElementById('tokenInput').value.trim();
-            if (!token) {
-                showToast('Please enter your GitHub token', 'error');
+            const password = document.getElementById('passwordInput').value;
+            if (!password) {
+                showToast('Please enter your password', 'error');
                 return;
             }
 
-            // Test the token by fetching plans.json
-            try {
-                const response = await fetch(`${GITHUB_API}/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/wellness-plans-data/plans.json`, {
-                    headers: { 'Authorization': `token ${token}` }
-                });
+            const hash = await hashPassword(password);
 
-                if (!response.ok) {
-                    throw new Error('Invalid token or repository not found');
-                }
-
-                githubToken = token;
-                localStorage.setItem('githubToken', token);
+            if (hash === PASSWORD_HASH) {
+                isAuthenticated = true;
+                sessionStorage.setItem('adminAuth', 'true');
                 await loadPlansData();
                 showMainContent();
                 showToast('Successfully logged in!', 'success');
-            } catch (error) {
-                showToast('Login failed: ' + error.message, 'error');
+                document.getElementById('passwordInput').value = '';
+            } else {
+                showToast('Incorrect password', 'error');
             }
         }
 
         function logout() {
-            localStorage.removeItem('githubToken');
-            githubToken = null;
+            sessionStorage.removeItem('adminAuth');
+            isAuthenticated = false;
             document.getElementById('loginSection').style.display = 'block';
             document.getElementById('toolbar').style.display = 'none';
             document.getElementById('mainContent').classList.remove('active');
-            document.getElementById('tokenInput').value = '';
+            document.getElementById('passwordInput').value = '';
         }
 
         function showMainContent() {
@@ -581,7 +586,7 @@
         async function loadPlansData() {
             try {
                 const response = await fetch(`${GITHUB_API}/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/wellness-plans-data/plans.json`, {
-                    headers: { 'Authorization': `token ${githubToken}` }
+                    headers: { 'Authorization': `token ${GITHUB_TOKEN}` }
                 });
 
                 if (!response.ok) {
@@ -766,7 +771,7 @@
                 const response = await fetch(`${GITHUB_API}/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/wellness-plans-data/plans.json`, {
                     method: 'PUT',
                     headers: {
-                        'Authorization': `token ${githubToken}`,
+                        'Authorization': `token ${GITHUB_TOKEN}`,
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
@@ -812,7 +817,7 @@
 
         // Initialize on page load
         window.addEventListener('DOMContentLoaded', function() {
-            if (githubToken) {
+            if (isAuthenticated) {
                 loadPlansData().then(showMainContent);
             }
         });
