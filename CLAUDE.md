@@ -1,11 +1,28 @@
 # Wellness Plan Estimator - Project Documentation
 
+## ⚡ Current Status (February 2026)
+
+**✅ Full Service Management: OPERATIONAL**
+- Staff can add/delete/edit services via admin portal (no code required)
+- Service IDs migrated to Covetrus codes for system consistency
+- All pricing and service changes sync automatically via GitHub
+- **ONE FINAL manual distribution pending** for latest HTML structure changes (itemized pricing breakdown)
+- **After that: All future PRICING and SERVICE updates sync automatically** ✨
+
+**📋 Recent Changes:**
+- February 13, 2026 (PM): ✅ Added full service management (add/delete/edit services)
+- February 13, 2026 (AM): Added itemized pricing breakdown (Base Plan + Add-Ons = Monthly Payment)
+- Action required: Distribute updated Wellness_Estimate_Generator.html to all hospital computers ONE LAST TIME
+
+---
+
 ## Project Overview
 
 Veterinary wellness plan estimate generator for creating monthly payment plans. Staff can:
 - Create estimates for multiple pets across 4 plan types (Puppy, Canine Adult, Kitten, Feline Adult)
 - Customize with optional services (spay/neuter, dental, microchip, etc.)
 - Email estimates to clients with secure, self-contained viewer links
+- **Update pricing via admin portal** (no manual file distribution needed)
 
 ## Current Architecture
 
@@ -27,15 +44,19 @@ Veterinary wellness plan estimate generator for creating monthly payment plans. 
 
 ### Main Project Files
 
-**Wellness_Estimate_Generator.html** (8600+ lines)
+**Wellness_Estimate_Generator.html** (2600+ lines)
 - **Purpose**: Staff-facing estimate generator
 - **Location**: Hospital computers (manually distributed)
 - **Key sections**:
   - Lines 1-1800: HTML structure, CSS styling, EmailJS integration
-  - Lines 1809-1902: `plansData` object (pricing/services) - **MIGRATION TARGET**
-  - Lines 1905-2200: Multi-pet state management
-  - Lines 1923-1925: `getEnrollmentFee()` function - **NEEDS UPDATE**
-  - Lines 2200+: Pet card rendering, calculation logic, email generation
+  - Line 1826: `PLANS_DATA_URL` - GitHub Pages endpoint ✅
+  - Lines 1828-1904: `loadPlansData()` function - Fetches from GitHub ✅
+  - Lines 1874-1980: Hardcoded fallback data (safety net)
+  - Lines 1987-1994: DOMContentLoaded - Calls `loadPlansData()` ✅
+  - Lines 1996-1998: `getEnrollmentFee()` function - Uses dynamic `enrollmentFees` ✅
+  - Lines 2000-2018: `calculatePetBreakdown()` helper - NEW (itemized pricing)
+  - Lines 2020-2035: `calculatePetTotal()` - Main calculation logic
+  - Lines 2067+: Pet card rendering, calculation logic, email generation
 
 **estimate-viewer.html**
 - **Purpose**: Client-facing estimate display (read-only)
@@ -54,22 +75,64 @@ Veterinary wellness plan estimate generator for creating monthly payment plans. 
 - Testing file for email templates
 - Not used in production
 
+## ✅ Admin Portal Capabilities (FULLY IMPLEMENTED)
+
+### What Staff Can Do (No Developer Needed)
+
+**Pricing Management:**
+- ✅ Update base plan costs (monthly pricing)
+- ✅ Update enrollment fees (first pet, additional pets)
+- ✅ Edit optional service costs
+- ✅ All pricing changes sync automatically to all hospital computers
+
+**Service Management:** ✨ NEW
+- ✅ Add new optional services (with Covetrus code, name, cost, qty, note)
+- ✅ Add new included services (with Covetrus code, name, qty)
+- ✅ Edit existing services (name, cost, quantity, notes)
+- ✅ Delete services (with confirmation)
+- ✅ Validation prevents duplicate codes and invalid data
+- ✅ Service codes match Covetrus practice management system
+
+**How to Access:**
+1. Open: `wellness-plans-data/admin.html`
+2. Log in with password
+3. Make changes via web interface
+4. Click Save → Automatic GitHub commit
+5. Changes sync to all hospital computers within 60 seconds
+
+**Audit Trail:**
+- All changes tracked in GitHub commit history
+- View history: https://github.com/samsamanowitz/Wellness-Plan-Estimates/commits/main/wellness-plans-data/plans.json
+
+---
+
 ## Data Structures
 
-### plansData Object (line 1809)
+### ✅ plansData Object (Dynamically Loaded from GitHub)
+**Source**: `https://samsamanowitz.github.io/Wellness-Plan-Estimates/wellness-plans-data/plans.json`
+
 ```javascript
-const plansData = {
+// Loaded dynamically at runtime (line 1828-1850)
+let plansData = {}; // Populated from GitHub Pages
+let enrollmentFees = { first: 50.00, additional: 40.00 }; // Populated from GitHub Pages
+
+// Structure:
+plansData = {
     puppy: {
         name: "Puppy Plan 2026",
         displayName: "Puppy Plan 2026",
         species: "canine",  // or "feline"
         baseCost: 67.00,    // Monthly base price
         included: [
-            { name: "Service Name", qty: "Unlimited" | "1" | "2" | "As Recommended" }
+            {
+                id: "WPOF",              // ✨ NEW: Covetrus service code
+                name: "Unlimited Office Visits...",
+                qty: "Unlimited" | "1" | "2" | "As Recommended"
+            }
         ],
         optional: [
             {
-                id: "puppy_spay",          // Unique identifier
+                id: "WPSPAYK9",            // ✨ UPDATED: Now uses Covetrus codes
                 name: "Spay Surgery",       // Display name
                 cost: 54.00,                // Monthly cost
                 qty: 1,                     // Quantity
@@ -83,9 +146,15 @@ const plansData = {
 };
 ```
 
-### Enrollment Fees
-- **First pet**: $50.00 (hardcoded at line 1923)
-- **Additional pets**: $40.00 (hardcoded at line 1923)
+**Key Changes in Version 2026.2:**
+- ✅ All services now have unique IDs (included services previously lacked IDs)
+- ✅ Service IDs are Covetrus codes (WPSPAYK9, K222, RADS3, etc.) for system consistency
+- ✅ Backwards compatible: Old estimates with old service IDs still work
+
+### ✅ Enrollment Fees (Dynamically Loaded)
+- **First pet**: Loaded from `plans.json` → `settings.enrollmentFeeFirst` (currently $50.00)
+- **Additional pets**: Loaded from `plans.json` → `settings.enrollmentFeeAdditional` (currently $40.00)
+- **Fallback**: Hardcoded values used if GitHub/cache unavailable
 
 ### Pet State Object
 ```javascript
@@ -104,37 +173,41 @@ const plansData = {
 }
 ```
 
-## Current Pain Points (Reason for This Project)
+## ✅ Implemented Solution (COMPLETED)
 
-**Problem**: Pricing is hardcoded in HTML
-- Must edit code to change prices (risky)
-- Must manually copy updated file to 5-6 hospital computers
-- Must delete old version on each computer
+**Previous Problem**: Pricing was hardcoded in HTML
+- Required editing code to change prices (risky)
+- Required manual copying updated file to 5-6 hospital computers
 - No audit trail for price changes
-- Staff can't update prices themselves
+- Staff couldn't update prices themselves
 
-**Solution**: Admin interface + GitHub-based data storage
-- Staff updates pricing via web interface (no code editing)
-- Changes automatically sync to all computers
-- Full audit trail via Git commits
-- Zero-cost hosting (GitHub Pages)
+**Current Solution**: ✅ **FULLY IMPLEMENTED**
+- ✅ Admin interface deployed at: `wellness-plans-data/admin.html`
+- ✅ Pricing data stored in GitHub repository: `wellness-plans-data/plans.json`
+- ✅ Generator fetches data from: `https://samsamanowitz.github.io/Wellness-Plan-Estimates/wellness-plans-data/plans.json`
+- ✅ Staff can update pricing via web interface (no code editing required)
+- ✅ Changes automatically sync to all hospital computers
+- ✅ Full audit trail via Git commits
+- ✅ Zero-cost hosting (GitHub Pages)
 
-## New Architecture (This Implementation)
+**Important**: HTML structure changes (like adding new features) still require manual distribution, but **pricing updates now sync automatically**.
 
-### Data Flow
+## ✅ Current Architecture (IMPLEMENTED)
+
+### Data Flow (Live System)
 ```
 Admin Interface (admin.html)
     ↓ GitHub API commit
-GitHub Repository (wellness-plans-data)
+GitHub Repository (Wellness-Plan-Estimates/wellness-plans-data)
     ↓ GitHub Pages serves
-plans.json (https://your-org.github.io/wellness-plans-data/plans.json)
-    ↓ fetch() on page load
+plans.json (https://samsamanowitz.github.io/Wellness-Plan-Estimates/wellness-plans-data/plans.json)
+    ↓ fetch() on page load (with localStorage cache fallback)
 Wellness_Estimate_Generator.html (all hospital computers)
     ↓ LZ-compressed URL
-estimate-viewer.html (clients)
+estimate-viewer.html (https://university-animal-clinic.github.io/uacvet.github.io/estimate-viewer.html)
 ```
 
-### New Repository: wellness-plans-data
+### Repository: wellness-plans-data (ACTIVE)
 ```
 wellness-plans-data/
 ├── plans.json          # Single source of truth for all pricing
@@ -217,28 +290,31 @@ function getEnrollmentFee(index) {
 }
 ```
 
-## Deployment Process
+## ✅ Deployment Status
 
-### One-Time Setup
-1. Create GitHub repository `wellness-plans-data`
-2. Enable GitHub Pages (Settings → Pages → Source: main branch, / root)
-3. Create GitHub Personal Access Token (Settings → Developer settings → PAT → Generate with `repo` scope)
-4. Upload files: plans.json, admin.html, README.md
-5. Verify JSON accessible at: `https://YOUR-ORG.github.io/wellness-plans-data/plans.json`
+### ✅ One-Time Setup (COMPLETED)
+1. ✅ GitHub repository created: `Wellness-Plan-Estimates/wellness-plans-data`
+2. ✅ GitHub Pages enabled and serving at: `https://samsamanowitz.github.io/Wellness-Plan-Estimates/wellness-plans-data/plans.json`
+3. ✅ GitHub Personal Access Token configured
+4. ✅ Files deployed: plans.json, admin.html, README.md, SETUP.sh
+5. ✅ JSON verified accessible (HTTP 200 OK)
 
-### Generator Update (One-Time)
-1. Update Wellness_Estimate_Generator.html with new fetch logic
-2. Replace hardcoded `plansData` with dynamic loading
-3. Manually copy to all hospital computers (last time!)
-4. Test on one computer first, then roll out
+### ✅ Generator Update (COMPLETED)
+1. ✅ Wellness_Estimate_Generator.html updated with GitHub fetch logic
+2. ✅ `loadPlansData()` function implemented (line 1828)
+3. ✅ localStorage cache fallback added for offline capability
+4. ✅ Hardcoded fallback data retained as ultimate safety net
+5. ⏳ **PENDING: Manual distribution to hospital computers with latest changes**
 
-### Ongoing Price Updates
-1. Admin opens: `https://YOUR-ORG.github.io/wellness-plans-data/admin.html`
-2. Enters GitHub PAT (stored in localStorage)
-3. Edits pricing inline
-4. Clicks Save → Creates Git commit
-5. GitHub Pages updates (~30-60 seconds)
-6. Hospital computers get new data on next page refresh
+### 🔄 Ongoing Price Updates (ACTIVE)
+**How Staff Updates Pricing:**
+1. Open admin interface: `wellness-plans-data/admin.html`
+2. Enter GitHub PAT (stored in localStorage)
+3. Edit pricing inline in web interface
+4. Click Save → Creates Git commit automatically
+5. GitHub Pages updates within 30-60 seconds
+6. **All hospital computers get new data on next page refresh** ✅
+7. **No manual file distribution needed** ✅
 
 ## Important Constraints
 
@@ -303,18 +379,28 @@ function getEnrollmentFee(index) {
 
 ## Contact & Support
 
-- **GitHub Repository**: [Link to wellness-plans-data repo]
-- **Technical Questions**: [Your contact info]
-- **Staff Training Materials**: [Link to training docs]
+- **GitHub Repository**: https://github.com/samsamanowitz/Wellness-Plan-Estimates
+- **Data Repository**: `wellness-plans-data/` folder
+- **Admin Interface**: `wellness-plans-data/admin.html`
+- **Plans Data**: https://samsamanowitz.github.io/Wellness-Plan-Estimates/wellness-plans-data/plans.json
+- **Estimate Viewer**: https://university-animal-clinic.github.io/uacvet.github.io/estimate-viewer.html
 
 ## Version History
 
-- **2026.1** (Feb 2026): Initial admin interface implementation
+- **2026.2** (Feb 13, 2026 PM): ✅ **Added full service management to admin portal**
+  - Staff can add/delete/edit services without developer help
+  - Service IDs migrated to Covetrus codes (WPSPAYK9, K222, RADS3, etc.)
+  - Added service code validation and duplicate prevention
+  - Enhanced admin UI with service management buttons
+  - All services now have unique IDs (included services previously lacked IDs)
+- **2026.2** (Feb 13, 2026 AM): ✅ Added itemized pricing breakdown (Base Plan + Add-Ons = Monthly Payment)
+- **2026.1** (Feb 2026): ✅ Completed GitHub integration - pricing now updates automatically via admin portal
 - **2025.4** (2025): Updated to 2026 pricing, removed Advanced plans
 - **2025.3** (2025): Added Pre-Op Blood Panel badge
 - **2025.2** (2025): Fixed mobile layout for included services
 
 ---
 
-**Last Updated**: 2026-02-13
+**Last Updated**: 2026-02-13 (PM)
 **Maintained By**: Samanowitz Technologies LLC
+**Current Version**: 2026.2
