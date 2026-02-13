@@ -305,10 +305,10 @@
   },
   "settings": {
     "enrollmentFeeFirst": 50,
-    "enrollmentFeeAdditional": 45
+    "enrollmentFeeAdditional": 40
   },
   "metadata": {
-    "lastUpdated": "2026-02-13T17:59:10.698Z",
+    "lastUpdated": "2026-02-13T18:00:50.724Z",
     "version": "2026.1"
   }
 }
