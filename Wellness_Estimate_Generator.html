@@ -1806,96 +1806,157 @@ UklGRnJrAQBXRUJQVlA4WAoAAAAwAAAAzwcA7gMASUNDUMgBAAAAAAHIAAAAAAQwAABtbnRyUkdCIFhZ
             }, 300);
         }
 
-        const plansData = {
-            puppy: {
-                name: "Puppy Plan 2026",
-                displayName: "Puppy Plan 2026",
-                species: "canine",
-                baseCost: 67.00,
-                included: [
-                    { name: "Unlimited Office Visits, Including Comprehensive Physical Exam", qty: "Unlimited" },
-                    { name: "Core Vaccinations as Recommended by Your Veterinarian - May Include DA2PP, Leptospirosis, Bordetella and Rabies", qty: "As Recommended" },
-                    { name: "Up to 2 Parasite Fecal Tests", qty: "2" },
-                    { name: "Up to 2 Deworming Treatments", qty: "2" },
-                    { name: "Heartworm/Tick Borne Disease Test", qty: "1" },
-                    { name: "Unlimited Routine Nail Trims", qty: "Unlimited" },
-                    { name: "10% Discount on Heartworm and Flea/Tick Prevention", qty: "" }
-                ],
-                optional: [
-                    { id: "puppy_spay", name: "Spay Surgery", cost: 54.00, qty: 1, includesNote: "Includes Pre-Op Blood Panel" },
-                    { id: "puppy_neuter", name: "Neuter Surgery", cost: 52.67, qty: 1, includesNote: "Includes Pre-Op Blood Panel" },
-                    { id: "puppy_gland", name: "6 Anal Gland Expressions", cost: 17.20, qty: 6 },
-                    { id: "puppy_microchip", name: "Microchip I.D. and Registration", cost: 4.27, qty: 1 }
-                ]
-            },
-            canineAdult: {
-                name: "Canine Adult Plan 2026",
-                displayName: "Canine Adult Plan 2026",
-                species: "canine",
-                baseCost: 62.00,
-                included: [
-                    { name: "Unlimited Office Visits, Including Comprehensive Physical Exam", qty: "Unlimited" },
-                    { name: "Core Vaccinations as Recommended by Your Veterinarian - May Include DA2PP, Leptospirosis, Bordetella and Rabies", qty: "As Recommended" },
-                    { name: "Parasite Fecal Test", qty: "1" },
-                    { name: "Deworming Treatment", qty: "1" },
-                    { name: "Heartworm/Tick Borne Disease Test", qty: "1" },
-                    { name: "Annual Preventive Diagnostic Screening - Includes Chemistry, Complete Blood Count, Heartworm (Ag), T4 and Urinalysis", qty: "1" },
-                    { name: "Unlimited Routine Nail Trims", qty: "Unlimited" },
-                    { name: "10% Discount on Heartworm and Flea/Tick Prevention", qty: "" }
-                ],
-                optional: [
-                    { id: "adult_spay", name: "Spay Surgery", cost: 54.00, qty: 1, includesNote: "Includes Pre-Op Blood Panel" },
-                    { id: "adult_neuter", name: "Neuter Surgery", cost: 52.67, qty: 1, includesNote: "Includes Pre-Op Blood Panel" },
-                    { id: "adult_dental", name: "Dental Procedure", cost: 50.47, qty: 1, includesNote: "Includes Pre-Op Blood Panel" },
-                    { id: "adult_gland", name: "6 Anal Gland Expressions", cost: 17.20, qty: 6 },
-                    { id: "adult_microchip", name: "Microchip I.D. & Registration", cost: 4.27, qty: 1 },
-                    { id: "adult_ultrasound", name: "Abdominal Ultrasound", cost: 35.00, qty: 1 }
-                ]
-            },
-            kitten: {
-                name: "Kitten Plan 2026",
-                displayName: "Kitten Plan 2026",
-                species: "feline",
-                baseCost: 54.00,
-                included: [
-                    { name: "Unlimited Office Visits, Including Comprehensive Physical Exam", qty: "Unlimited" },
-                    { name: "Core Vaccinations as Recommended by Your Veterinarian - May Include FVRCP and Rabies", qty: "As Recommended" },
-                    { name: "Up to 2 Parasite Fecal Tests", qty: "2" },
-                    { name: "Up to 2 Deworming Treatments", qty: "2" },
-                    { name: "Feline Leukemia/Feline Immunodeficiency Virus Test", qty: "1" },
-                    { name: "Unlimited Routine Nail Trims", qty: "Unlimited" },
-                    { name: "10% Discount on Heartworm and Flea/Tick Prevention", qty: "" }
-                ],
-                optional: [
-                    { id: "kitten_spay", name: "Spay Surgery", cost: 53.47, qty: 1, includesNote: "Includes Pre-Op Blood Panel" },
-                    { id: "kitten_neuter", name: "Neuter Surgery", cost: 44.93, qty: 1, includesNote: "Includes Pre-Op Blood Panel" },
-                    { id: "kitten_microchip", name: "Microchip I.D. and Registration", cost: 4.27, qty: 1 }
-                ]
-            },
-            felineAdult: {
-                name: "Feline Adult Plan 2026",
-                displayName: "Feline Adult Plan 2026",
-                species: "feline",
-                baseCost: 55.00,
-                included: [
-                    { name: "Unlimited Office Visits, Including Comprehensive Physical Exam", qty: "Unlimited" },
-                    { name: "Core Vaccinations as Recommended by Your Veterinarian - May Include FVRCP and Rabies", qty: "As Recommended" },
-                    { name: "Parasite Fecal Test", qty: "1" },
-                    { name: "Deworming Treatment", qty: "1" },
-                    { name: "Feline Leukemia/Feline Immunodeficiency Virus Test", qty: "1" },
-                    { name: "Annual Preventive Diagnostic Screening - Includes Chemistry, Complete Blood Count, Heartworm (Ag), T4 and Urinalysis", qty: "1" },
-                    { name: "Unlimited Routine Nail Trims", qty: "Unlimited" },
-                    { name: "10% Discount on Heartworm and Flea/Tick Prevention", qty: "" }
-                ],
-                optional: [
-                    { id: "fadult_spay", name: "Spay Surgery", cost: 53.47, qty: 1, includesNote: "Includes Pre-Op Blood Panel" },
-                    { id: "fadult_neuter", name: "Neuter Surgery", cost: 44.93, qty: 1, includesNote: "Includes Pre-Op Blood Panel" },
-                    { id: "fadult_dental", name: "Dental Procedure", cost: 48.47, qty: 1, includesNote: "Includes Pre-Op Blood Panel" },
-                    { id: "fadult_microchip", name: "Microchip I.D. & Registration", cost: 4.27, qty: 1 },
-                    { id: "fadult_ultrasound", name: "Abdominal Ultrasound", cost: 35.00, qty: 1 }
-                ]
+        // Plans data - loaded dynamically from GitHub Pages
+        let plansData = {};
+        let enrollmentFees = { first: 50.00, additional: 40.00 }; // Default values
+
+        // IMPORTANT: Update this URL with your GitHub Pages URL
+        const PLANS_DATA_URL = 'https://samsamanowitz.github.io/Wellness-Plan-Estimates/wellness-plans-data/plans.json';
+
+        async function loadPlansData() {
+            try {
+                console.log('Loading plans data from GitHub Pages...');
+                const response = await fetch(PLANS_DATA_URL);
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch plans data: ' + response.status);
+                }
+
+                const data = await response.json();
+
+                // Populate global variables
+                plansData = data.plans;
+                enrollmentFees.first = data.settings.enrollmentFeeFirst;
+                enrollmentFees.additional = data.settings.enrollmentFeeAdditional;
+
+                // Cache for offline fallback
+                localStorage.setItem('plansDataCache', JSON.stringify(data));
+                localStorage.setItem('plansCacheTime', Date.now());
+
+                console.log('✓ Plans loaded from GitHub Pages successfully');
+                console.log('Last updated:', data.metadata.lastUpdated);
+                return true;
+
+            } catch (error) {
+                console.warn('Failed to load from GitHub Pages, attempting to use cache:', error.message);
+
+                // Try localStorage cache
+                const cached = localStorage.getItem('plansDataCache');
+                if (cached) {
+                    try {
+                        const data = JSON.parse(cached);
+                        plansData = data.plans;
+                        enrollmentFees.first = data.settings.enrollmentFeeFirst;
+                        enrollmentFees.additional = data.settings.enrollmentFeeAdditional;
+
+                        const cacheTime = new Date(parseInt(localStorage.getItem('plansCacheTime')));
+                        console.log('✓ Using cached plans data from:', cacheTime.toLocaleString());
+                        return true;
+                    } catch (cacheError) {
+                        console.error('Cache parse error:', cacheError);
+                    }
+                }
+
+                // Ultimate fallback - hardcoded data
+                console.warn('⚠️ Using hardcoded fallback data');
+                plansData = {
+                    puppy: {
+                        name: "Puppy Plan 2026",
+                        displayName: "Puppy Plan 2026",
+                        species: "canine",
+                        baseCost: 67.00,
+                        included: [
+                            { name: "Unlimited Office Visits, Including Comprehensive Physical Exam", qty: "Unlimited" },
+                            { name: "Core Vaccinations as Recommended by Your Veterinarian - May Include DA2PP, Leptospirosis, Bordetella and Rabies", qty: "As Recommended" },
+                            { name: "Up to 2 Parasite Fecal Tests", qty: "2" },
+                            { name: "Up to 2 Deworming Treatments", qty: "2" },
+                            { name: "Heartworm/Tick Borne Disease Test", qty: "1" },
+                            { name: "Unlimited Routine Nail Trims", qty: "Unlimited" },
+                            { name: "10% Discount on Heartworm and Flea/Tick Prevention", qty: "" }
+                        ],
+                        optional: [
+                            { id: "puppy_spay", name: "Spay Surgery", cost: 54.00, qty: 1, includesNote: "Includes Pre-Op Blood Panel" },
+                            { id: "puppy_neuter", name: "Neuter Surgery", cost: 52.67, qty: 1, includesNote: "Includes Pre-Op Blood Panel" },
+                            { id: "puppy_gland", name: "6 Anal Gland Expressions", cost: 17.20, qty: 6 },
+                            { id: "puppy_microchip", name: "Microchip I.D. and Registration", cost: 4.27, qty: 1 },
+                            { id: "puppy_radiograph", name: "WP Radiograph (3 Views)", cost: 20.33, qty: 1 }
+                        ]
+                    },
+                    canineAdult: {
+                        name: "Canine Adult Plan 2026",
+                        displayName: "Canine Adult Plan 2026",
+                        species: "canine",
+                        baseCost: 62.00,
+                        included: [
+                            { name: "Unlimited Office Visits, Including Comprehensive Physical Exam", qty: "Unlimited" },
+                            { name: "Core Vaccinations as Recommended by Your Veterinarian - May Include DA2PP, Leptospirosis, Bordetella and Rabies", qty: "As Recommended" },
+                            { name: "Parasite Fecal Test", qty: "1" },
+                            { name: "Deworming Treatment", qty: "1" },
+                            { name: "Heartworm/Tick Borne Disease Test", qty: "1" },
+                            { name: "Annual Preventive Diagnostic Screening - Includes Chemistry, Complete Blood Count, Heartworm (Ag), T4 and Urinalysis", qty: "1" },
+                            { name: "Unlimited Routine Nail Trims", qty: "Unlimited" },
+                            { name: "10% Discount on Heartworm and Flea/Tick Prevention", qty: "" }
+                        ],
+                        optional: [
+                            { id: "adult_spay", name: "Spay Surgery", cost: 54.00, qty: 1, includesNote: "Includes Pre-Op Blood Panel" },
+                            { id: "adult_neuter", name: "Neuter Surgery", cost: 52.67, qty: 1, includesNote: "Includes Pre-Op Blood Panel" },
+                            { id: "adult_dental", name: "Dental Procedure", cost: 50.47, qty: 1, includesNote: "Includes Pre-Op Blood Panel" },
+                            { id: "adult_gland", name: "6 Anal Gland Expressions", cost: 17.20, qty: 6 },
+                            { id: "adult_microchip", name: "Microchip I.D. & Registration", cost: 4.27, qty: 1 },
+                            { id: "adult_ultrasound", name: "Abdominal Ultrasound", cost: 35.00, qty: 1 },
+                            { id: "adult_radiograph", name: "WP Radiograph (3 Views)", cost: 20.33, qty: 1 }
+                        ]
+                    },
+                    kitten: {
+                        name: "Kitten Plan 2026",
+                        displayName: "Kitten Plan 2026",
+                        species: "feline",
+                        baseCost: 54.00,
+                        included: [
+                            { name: "Unlimited Office Visits, Including Comprehensive Physical Exam", qty: "Unlimited" },
+                            { name: "Core Vaccinations as Recommended by Your Veterinarian - May Include FVRCP and Rabies", qty: "As Recommended" },
+                            { name: "Up to 2 Parasite Fecal Tests", qty: "2" },
+                            { name: "Up to 2 Deworming Treatments", qty: "2" },
+                            { name: "Feline Leukemia/Feline Immunodeficiency Virus Test", qty: "1" },
+                            { name: "Unlimited Routine Nail Trims", qty: "Unlimited" },
+                            { name: "10% Discount on Heartworm and Flea/Tick Prevention", qty: "" }
+                        ],
+                        optional: [
+                            { id: "kitten_spay", name: "Spay Surgery", cost: 53.47, qty: 1, includesNote: "Includes Pre-Op Blood Panel" },
+                            { id: "kitten_neuter", name: "Neuter Surgery", cost: 44.93, qty: 1, includesNote: "Includes Pre-Op Blood Panel" },
+                            { id: "kitten_microchip", name: "Microchip I.D. and Registration", cost: 4.27, qty: 1 },
+                            { id: "kitten_radiograph", name: "WP Radiograph (3 Views)", cost: 20.33, qty: 1 }
+                        ]
+                    },
+                    felineAdult: {
+                        name: "Feline Adult Plan 2026",
+                        displayName: "Feline Adult Plan 2026",
+                        species: "feline",
+                        baseCost: 55.00,
+                        included: [
+                            { name: "Unlimited Office Visits, Including Comprehensive Physical Exam", qty: "Unlimited" },
+                            { name: "Core Vaccinations as Recommended by Your Veterinarian - May Include FVRCP and Rabies", qty: "As Recommended" },
+                            { name: "Parasite Fecal Test", qty: "1" },
+                            { name: "Deworming Treatment", qty: "1" },
+                            { name: "Feline Leukemia/Feline Immunodeficiency Virus Test", qty: "1" },
+                            { name: "Annual Preventive Diagnostic Screening - Includes Chemistry, Complete Blood Count, Heartworm (Ag), T4 and Urinalysis", qty: "1" },
+                            { name: "Unlimited Routine Nail Trims", qty: "Unlimited" },
+                            { name: "10% Discount on Heartworm and Flea/Tick Prevention", qty: "" }
+                        ],
+                        optional: [
+                            { id: "fadult_spay", name: "Spay Surgery", cost: 53.47, qty: 1, includesNote: "Includes Pre-Op Blood Panel" },
+                            { id: "fadult_neuter", name: "Neuter Surgery", cost: 44.93, qty: 1, includesNote: "Includes Pre-Op Blood Panel" },
+                            { id: "fadult_dental", name: "Dental Procedure", cost: 48.47, qty: 1, includesNote: "Includes Pre-Op Blood Panel" },
+                            { id: "fadult_microchip", name: "Microchip I.D. & Registration", cost: 4.27, qty: 1 },
+                            { id: "fadult_ultrasound", name: "Abdominal Ultrasound", cost: 35.00, qty: 1 },
+                            { id: "fadult_radiograph", name: "WP Radiograph (3 Views)", cost: 20.33, qty: 1 }
+                        ]
+                    }
+                };
+                enrollmentFees = { first: 50.00, additional: 40.00 };
+                return false;
             }
-        };
+        }
 
         // Multi-pet state
         let pets = [
@@ -1911,13 +1972,17 @@ UklGRnJrAQBXRUJQVlA4WAoAAAAwAAAAzwcA7gMASUNDUMgBAAAAAAHIAAAAAAQwAABtbnRyUkdCIFhZ
         const MAX_PETS = 5;
 
         // Initialize on page load
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Load plans data first
+            await loadPlansData();
+
+            // Then render UI
             renderAllPetCards();
             updateGrandTotal();
         });
 
         function getEnrollmentFee(index) {
-            return index === 0 ? 50.00 : 40.00;
+            return index === 0 ? enrollmentFees.first : enrollmentFees.additional;
         }
 
         function getSpeciesIcon(planKey) {
