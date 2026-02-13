@@ -437,6 +437,104 @@
             font-style: italic;
             margin-left: 10px;
         }
+
+        /* Enhanced service management styles */
+        .services-section h4 {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .service-item {
+            display: grid;
+            grid-template-columns: 1fr auto auto;
+            gap: 15px;
+            align-items: center;
+            padding: 12px;
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            margin-bottom: 10px;
+        }
+
+        .service-item.optional {
+            border-left: 3px solid #fbbf24;
+            background: #fff3cd;
+        }
+
+        .service-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .service-name {
+            font-weight: 500;
+            color: #333;
+        }
+
+        .service-code {
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            color: #666;
+            background: #f5f5f5;
+            padding: 2px 6px;
+            border-radius: 3px;
+            display: inline-block;
+            width: fit-content;
+        }
+
+        .service-detail {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .service-cost {
+            font-weight: 600;
+            color: #059669;
+        }
+
+        .service-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .modal-content label .required {
+            color: #dc2626;
+            margin-left: 2px;
+        }
+
+        .help-text {
+            color: #666;
+            font-size: 12px;
+            margin-top: 4px;
+            font-style: italic;
+        }
+
+        .btn-danger {
+            background: #dc2626;
+        }
+
+        .btn-danger:hover {
+            background: #b91c1c;
+        }
+
+        @media (max-width: 768px) {
+            .service-item {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+
+            .service-actions {
+                justify-content: flex-start;
+            }
+        }
     </style>
 </head>
 <body>
@@ -505,21 +603,44 @@
     <div class="modal" id="editServiceModal">
         <div class="modal-content">
             <h3 id="modalTitle">Edit Service</h3>
-            <label>Service Name</label>
-            <input type="text" id="modalServiceName">
 
-            <label>Monthly Cost ($)</label>
-            <input type="number" id="modalServiceCost" step="0.01" min="0">
+            <label>Service Code <span class="required">*</span></label>
+            <input type="text" id="modalServiceCode" placeholder="e.g., WPSPAYK9, K222, RADS3" maxlength="20">
+            <p class="help-text" style="margin-top: -10px; margin-bottom: 15px;">Enter the Covetrus service code. Must be unique within this plan.</p>
 
-            <label>Quantity</label>
-            <input type="text" id="modalServiceQty">
+            <label>Service Name <span class="required">*</span></label>
+            <input type="text" id="modalServiceName" placeholder="e.g., Spay Surgery">
 
-            <label>Includes Note (optional)</label>
-            <input type="text" id="modalServiceNote" placeholder="e.g., Includes Pre-Op Blood Panel">
+            <div id="optionalFields">
+                <label>Monthly Cost ($) <span class="required">*</span></label>
+                <input type="number" id="modalServiceCost" step="0.01" min="0" placeholder="0.00">
+            </div>
+
+            <label>Quantity <span class="required">*</span></label>
+            <input type="text" id="modalServiceQty" placeholder="e.g., 1, 2, Unlimited, As Recommended">
+
+            <div id="optionalFieldsNote">
+                <label>Includes Note (optional)</label>
+                <input type="text" id="modalServiceNote" placeholder="e.g., Includes Pre-Op Blood Panel">
+            </div>
 
             <div class="modal-actions">
                 <button class="btn btn-secondary btn-small" onclick="closeModal()">Cancel</button>
-                <button class="btn btn-small" onclick="saveServiceEdit()">Save</button>
+                <button class="btn btn-small" id="modalSaveBtn" onclick="saveServiceEdit()">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="deleteConfirmModal">
+        <div class="modal-content" style="max-width: 450px;">
+            <h3>⚠️ Confirm Deletion</h3>
+            <p id="deleteConfirmText" style="color: #333; margin-bottom: 10px; line-height: 1.5;"></p>
+            <p style="color: #666; font-size: 13px; margin-top: 10px;">
+                This change will be committed to GitHub immediately and cannot be undone through the admin interface.
+            </p>
+            <div class="modal-actions">
+                <button class="btn btn-secondary btn-small" onclick="closeDeleteModal()">Cancel</button>
+                <button class="btn btn-danger btn-small" onclick="confirmDelete()">Delete Service</button>
             </div>
         </div>
     </div>
@@ -538,6 +659,12 @@
         let plansData = null;
         let currentFileSHA = null;
         let editingService = null;
+        // Structure: { planKey, serviceId, mode, serviceType }
+        // mode: 'editOptional'|'addOptional'|'editIncluded'|'addIncluded'
+        // serviceType: 'optional'|'included'
+
+        let deletingService = null;
+        // Structure: { planKey, serviceId, serviceType, serviceName, serviceCode }
 
         async function hashPassword(password) {
             const encoder = new TextEncoder();
@@ -626,27 +753,46 @@
             document.getElementById('felinePlans').innerHTML = felinePlansHTML;
         }
 
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML.replace(/'/g, '&#39;');
+        }
+
         function renderPlanCard(planKey, plan) {
             const icon = plan.species === 'canine' ? '🐕' : '🐈';
 
             const includedHTML = plan.included.map(service => `
                 <div class="service-item">
-                    <div class="service-name">${service.name}</div>
+                    <div class="service-info">
+                        <div class="service-name">${service.name}</div>
+                        <div class="service-code">${service.id}</div>
+                    </div>
                     <div class="service-qty">${service.qty || 'N/A'}</div>
+                    <div class="service-actions">
+                        <button class="btn btn-small" onclick="editIncludedService('${planKey}', '${service.id}')">Edit</button>
+                        <button class="btn btn-danger btn-small" onclick="deleteService('${planKey}', '${service.id}', 'included', '${escapeHtml(service.name)}', '${service.id}')">Delete</button>
+                    </div>
                 </div>
             `).join('');
 
             const optionalHTML = plan.optional.map(service => `
                 <div class="service-item optional">
-                    <div class="service-name">
-                        ${service.name}
-                        ${service.includesNote ? `<span class="includes-note">(${service.includesNote})</span>` : ''}
+                    <div class="service-info">
+                        <div class="service-name">
+                            ${service.name}
+                            ${service.includesNote ? `<span class="includes-note">(${service.includesNote})</span>` : ''}
+                        </div>
+                        <div class="service-code">${service.id}</div>
                     </div>
                     <div class="service-detail">
                         <span class="service-qty">Qty: ${service.qty}</span>
                         <span class="service-cost">$${service.cost.toFixed(2)}/mo</span>
                     </div>
-                    <button class="btn btn-small" onclick="editOptionalService('${planKey}', '${service.id}')">Edit</button>
+                    <div class="service-actions">
+                        <button class="btn btn-small" onclick="editOptionalService('${planKey}', '${service.id}')">Edit</button>
+                        <button class="btn btn-danger btn-small" onclick="deleteService('${planKey}', '${service.id}', 'optional', '${escapeHtml(service.name)}', '${service.id}')">Delete</button>
+                    </div>
                 </div>
             `).join('');
 
@@ -664,17 +810,19 @@
                     </div>
 
                     <div class="services-section">
-                        <h4>Included Services</h4>
+                        <h4>
+                            Included Services
+                            <button class="btn btn-small" onclick="addIncludedService('${planKey}')">+ Add Included</button>
+                        </h4>
                         ${includedHTML}
-                        <p class="help-text">Contact developer to modify included services</p>
                     </div>
 
                     <div class="services-section">
                         <h4>
                             Optional Services
+                            <button class="btn btn-small" onclick="addOptionalService('${planKey}')">+ Add Optional</button>
                         </h4>
                         ${optionalHTML}
-                        <p class="help-text">Click Edit to modify optional service pricing</p>
                     </div>
                 </div>
             `;
@@ -713,15 +861,74 @@
             await commitChanges(commitMessage);
         }
 
+        function addOptionalService(planKey) {
+            editingService = { planKey, serviceId: null, mode: 'addOptional', serviceType: 'optional' };
+
+            document.getElementById('modalTitle').textContent = 'Add Optional Service';
+            document.getElementById('modalServiceCode').value = '';
+            document.getElementById('modalServiceCode').readOnly = false;
+            document.getElementById('modalServiceName').value = '';
+            document.getElementById('modalServiceCost').value = '0.00';
+            document.getElementById('modalServiceQty').value = '1';
+            document.getElementById('modalServiceNote').value = '';
+            document.getElementById('modalSaveBtn').textContent = 'Add Service';
+
+            document.getElementById('optionalFields').style.display = 'block';
+            document.getElementById('optionalFieldsNote').style.display = 'block';
+
+            document.getElementById('editServiceModal').classList.add('active');
+            document.getElementById('modalServiceCode').focus();
+        }
+
+        function addIncludedService(planKey) {
+            editingService = { planKey, serviceId: null, mode: 'addIncluded', serviceType: 'included' };
+
+            document.getElementById('modalTitle').textContent = 'Add Included Service';
+            document.getElementById('modalServiceCode').value = '';
+            document.getElementById('modalServiceCode').readOnly = false;
+            document.getElementById('modalServiceName').value = '';
+            document.getElementById('modalServiceQty').value = '1';
+            document.getElementById('modalSaveBtn').textContent = 'Add Service';
+
+            document.getElementById('optionalFields').style.display = 'none';
+            document.getElementById('optionalFieldsNote').style.display = 'none';
+
+            document.getElementById('editServiceModal').classList.add('active');
+            document.getElementById('modalServiceCode').focus();
+        }
+
+        function editIncludedService(planKey, serviceId) {
+            const service = plansData.plans[planKey].included.find(s => s.id === serviceId);
+            editingService = { planKey, serviceId, mode: 'editIncluded', serviceType: 'included' };
+
+            document.getElementById('modalTitle').textContent = 'Edit Included Service';
+            document.getElementById('modalServiceCode').value = service.id;
+            document.getElementById('modalServiceCode').readOnly = true;
+            document.getElementById('modalServiceName').value = service.name;
+            document.getElementById('modalServiceQty').value = service.qty;
+            document.getElementById('modalSaveBtn').textContent = 'Save Changes';
+
+            document.getElementById('optionalFields').style.display = 'none';
+            document.getElementById('optionalFieldsNote').style.display = 'none';
+
+            document.getElementById('editServiceModal').classList.add('active');
+        }
+
         function editOptionalService(planKey, serviceId) {
-            editingService = { planKey, serviceId };
             const service = plansData.plans[planKey].optional.find(s => s.id === serviceId);
+            editingService = { planKey, serviceId, mode: 'editOptional', serviceType: 'optional' };
 
             document.getElementById('modalTitle').textContent = 'Edit Optional Service';
+            document.getElementById('modalServiceCode').value = service.id;
+            document.getElementById('modalServiceCode').readOnly = true;
             document.getElementById('modalServiceName').value = service.name;
             document.getElementById('modalServiceCost').value = service.cost;
             document.getElementById('modalServiceQty').value = service.qty;
             document.getElementById('modalServiceNote').value = service.includesNote || '';
+            document.getElementById('modalSaveBtn').textContent = 'Save Changes';
+
+            document.getElementById('optionalFields').style.display = 'block';
+            document.getElementById('optionalFieldsNote').style.display = 'block';
 
             document.getElementById('editServiceModal').classList.add('active');
         }
@@ -734,28 +941,156 @@
         async function saveServiceEdit() {
             if (!editingService) return;
 
-            const { planKey, serviceId } = editingService;
-            const service = plansData.plans[planKey].optional.find(s => s.id === serviceId);
+            const { planKey, serviceId, mode, serviceType } = editingService;
+            const serviceCode = document.getElementById('modalServiceCode').value.trim().toUpperCase();
+            const newName = document.getElementById('modalServiceName').value.trim();
+            const newQty = document.getElementById('modalServiceQty').value.trim();
 
-            const newName = document.getElementById('modalServiceName').value;
-            const newCost = parseFloat(document.getElementById('modalServiceCost').value);
-            const newQty = document.getElementById('modalServiceQty').value;
-            const newNote = document.getElementById('modalServiceNote').value;
-
-            if (!newName || isNaN(newCost) || newCost < 0) {
-                showToast('Invalid service data', 'error');
+            // Validation - Service Code
+            if (!serviceCode) {
+                showToast('Service code is required', 'error');
+                document.getElementById('modalServiceCode').focus();
                 return;
             }
 
-            const oldCost = service.cost;
-            service.name = newName;
-            service.cost = newCost;
-            service.qty = parseInt(newQty) || 1;
-            service.includesNote = newNote || undefined;
+            if (!/^[A-Z0-9\-]+$/.test(serviceCode)) {
+                showToast('Service code must contain only uppercase letters, numbers, and hyphens', 'error');
+                document.getElementById('modalServiceCode').focus();
+                return;
+            }
 
-            const commitMessage = `Update ${plansData.plans[planKey].displayName} - ${newName} from $${oldCost.toFixed(2)} to $${newCost.toFixed(2)}`;
+            // Check for duplicate service code (only when adding or if code changed)
+            if (mode.startsWith('add') || serviceId !== serviceCode) {
+                const duplicateInOptional = plansData.plans[planKey].optional.some(s => s.id === serviceCode);
+                const duplicateInIncluded = plansData.plans[planKey].included.some(s => s.id === serviceCode);
+
+                if (duplicateInOptional || duplicateInIncluded) {
+                    showToast('Service code ' + serviceCode + ' already exists in this plan', 'error');
+                    document.getElementById('modalServiceCode').focus();
+                    return;
+                }
+            }
+
+            // Validation - Service Name
+            if (!newName) {
+                showToast('Service name is required', 'error');
+                document.getElementById('modalServiceName').focus();
+                return;
+            }
+
+            if (newName.length > 200) {
+                showToast('Service name is too long (max 200 characters)', 'error');
+                return;
+            }
+
+            // Validation - Quantity
+            if (!newQty) {
+                showToast('Quantity is required', 'error');
+                document.getElementById('modalServiceQty').focus();
+                return;
+            }
+
+            let service, commitMessage;
+
+            if (mode === 'addOptional' || mode === 'addIncluded') {
+                // Adding new service
+                if (serviceType === 'optional') {
+                    const newCost = parseFloat(document.getElementById('modalServiceCost').value);
+                    const newNote = document.getElementById('modalServiceNote').value.trim();
+
+                    if (isNaN(newCost) || newCost < 0) {
+                        showToast('Please enter a valid cost (minimum $0.00)', 'error');
+                        document.getElementById('modalServiceCost').focus();
+                        return;
+                    }
+
+                    service = {
+                        id: serviceCode,
+                        name: newName,
+                        cost: newCost,
+                        qty: parseInt(newQty) || newQty,
+                        includesNote: newNote || undefined
+                    };
+
+                    plansData.plans[planKey].optional.push(service);
+                    commitMessage = `Add optional service to ${plansData.plans[planKey].displayName}: ${newName} (${serviceCode}) - $${newCost.toFixed(2)}/mo`;
+
+                } else {
+                    // Included service
+                    service = {
+                        id: serviceCode,
+                        name: newName,
+                        qty: newQty
+                    };
+
+                    plansData.plans[planKey].included.push(service);
+                    commitMessage = `Add included service to ${plansData.plans[planKey].displayName}: ${newName} (${serviceCode})`;
+                }
+
+            } else {
+                // Editing existing service
+                if (serviceType === 'optional') {
+                    service = plansData.plans[planKey].optional.find(s => s.id === serviceId);
+                    const newCost = parseFloat(document.getElementById('modalServiceCost').value);
+                    const newNote = document.getElementById('modalServiceNote').value.trim();
+
+                    if (isNaN(newCost) || newCost < 0) {
+                        showToast('Please enter a valid cost (minimum $0.00)', 'error');
+                        document.getElementById('modalServiceCost').focus();
+                        return;
+                    }
+
+                    const oldCost = service.cost;
+                    service.name = newName;
+                    service.cost = newCost;
+                    service.qty = parseInt(newQty) || newQty;
+                    service.includesNote = newNote || undefined;
+
+                    commitMessage = `Update ${plansData.plans[planKey].displayName} - ${newName} (${serviceCode}) from $${oldCost.toFixed(2)} to $${newCost.toFixed(2)}`;
+
+                } else {
+                    // Included service
+                    service = plansData.plans[planKey].included.find(s => s.id === serviceId);
+                    const oldName = service.name;
+                    service.name = newName;
+                    service.qty = newQty;
+
+                    commitMessage = `Update ${plansData.plans[planKey].displayName} included service (${serviceCode}): ${oldName} → ${newName}`;
+                }
+            }
+
             await commitChanges(commitMessage);
             closeModal();
+        }
+
+        function deleteService(planKey, serviceId, serviceType, serviceName, serviceCode) {
+            deletingService = { planKey, serviceId, serviceType, serviceName, serviceCode };
+
+            const decodedName = new DOMParser().parseFromString(serviceName, 'text/html').body.textContent;
+            document.getElementById('deleteConfirmText').textContent =
+                `Are you sure you want to delete "${decodedName}" (${serviceCode}) from ${plansData.plans[planKey].displayName}?`;
+
+            document.getElementById('deleteConfirmModal').classList.add('active');
+        }
+
+        function closeDeleteModal() {
+            document.getElementById('deleteConfirmModal').classList.remove('active');
+            deletingService = null;
+        }
+
+        async function confirmDelete() {
+            if (!deletingService) return;
+
+            const { planKey, serviceId, serviceType, serviceName, serviceCode } = deletingService;
+            const decodedName = new DOMParser().parseFromString(serviceName, 'text/html').body.textContent;
+
+            // Remove from array
+            plansData.plans[planKey][serviceType] = plansData.plans[planKey][serviceType].filter(s => s.id !== serviceId);
+
+            const commitMessage = `Delete ${serviceType} service from ${plansData.plans[planKey].displayName}: ${decodedName} (${serviceCode})`;
+
+            closeDeleteModal();
+            await commitChanges(commitMessage);
         }
 
         async function commitChanges(message) {
