@@ -4,7 +4,7 @@
       "name": "Puppy Plan 2026",
       "displayName": "Puppy Plan 2026",
       "species": "canine",
-      "baseCost": 67.00,
+      "baseCost": 67,
       "included": [
         {
           "name": "Unlimited Office Visits, Including Comprehensive Physical Exam",
@@ -39,7 +39,7 @@
         {
           "id": "puppy_spay",
           "name": "Spay Surgery",
-          "cost": 54.00,
+          "cost": 54,
           "qty": 1,
           "includesNote": "Includes Pre-Op Blood Panel"
         },
@@ -53,7 +53,7 @@
         {
           "id": "puppy_gland",
           "name": "6 Anal Gland Expressions",
-          "cost": 17.20,
+          "cost": 17.2,
           "qty": 6
         },
         {
@@ -74,7 +74,7 @@
       "name": "Canine Adult Plan 2026",
       "displayName": "Canine Adult Plan 2026",
       "species": "canine",
-      "baseCost": 62.00,
+      "baseCost": 62,
       "included": [
         {
           "name": "Unlimited Office Visits, Including Comprehensive Physical Exam",
@@ -113,7 +113,7 @@
         {
           "id": "adult_spay",
           "name": "Spay Surgery",
-          "cost": 54.00,
+          "cost": 54,
           "qty": 1,
           "includesNote": "Includes Pre-Op Blood Panel"
         },
@@ -134,7 +134,7 @@
         {
           "id": "adult_gland",
           "name": "6 Anal Gland Expressions",
-          "cost": 17.20,
+          "cost": 17.2,
           "qty": 6
         },
         {
@@ -146,7 +146,7 @@
         {
           "id": "adult_ultrasound",
           "name": "Abdominal Ultrasound",
-          "cost": 35.00,
+          "cost": 35,
           "qty": 1
         },
         {
@@ -161,7 +161,7 @@
       "name": "Kitten Plan 2026",
       "displayName": "Kitten Plan 2026",
       "species": "feline",
-      "baseCost": 54.00,
+      "baseCost": 54,
       "included": [
         {
           "name": "Unlimited Office Visits, Including Comprehensive Physical Exam",
@@ -225,7 +225,7 @@
       "name": "Feline Adult Plan 2026",
       "displayName": "Feline Adult Plan 2026",
       "species": "feline",
-      "baseCost": 55.00,
+      "baseCost": 55,
       "included": [
         {
           "name": "Unlimited Office Visits, Including Comprehensive Physical Exam",
@@ -291,7 +291,7 @@
         {
           "id": "fadult_ultrasound",
           "name": "Abdominal Ultrasound",
-          "cost": 35.00,
+          "cost": 35,
           "qty": 1
         },
         {
@@ -304,11 +304,11 @@
     }
   },
   "settings": {
-    "enrollmentFeeFirst": 50.00,
-    "enrollmentFeeAdditional": 40.00
+    "enrollmentFeeFirst": 50,
+    "enrollmentFeeAdditional": 45
   },
   "metadata": {
-    "lastUpdated": "2026-02-13T10:00:00Z",
+    "lastUpdated": "2026-02-13T17:59:10.698Z",
     "version": "2026.1"
   }
 }
