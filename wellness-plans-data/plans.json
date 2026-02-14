@@ -1,87 +1,12 @@
 {
+  "metadata": {
+    "lastUpdated": "2026-02-14T00:23:53.860Z",
+    "version": "2026.2"
+  },
   "plans": {
-    "puppy": {
-      "name": "Puppy Plan 2026",
-      "displayName": "Puppy Plan 2026",
-      "species": "canine",
-      "baseCost": 67,
-      "included": [
-        {
-          "id": "WPOF",
-          "name": "Unlimited Office Visits, Including Comprehensive Physical Exam",
-          "qty": "Unlimited"
-        },
-        {
-          "id": "B025",
-          "name": "Core Vaccinations as Recommended by Your Veterinarian - May Include DA2PP, Leptospirosis, Bordetella and Rabies",
-          "qty": "As Recommended"
-        },
-        {
-          "id": "T805",
-          "name": "Up to 2 Parasite Fecal Tests",
-          "qty": "2"
-        },
-        {
-          "id": "OF358",
-          "name": "Up to 2 Deworming Treatments",
-          "qty": "2"
-        },
-        {
-          "id": "99-0011516",
-          "name": "Heartworm/Tick Borne Disease Test",
-          "qty": "1"
-        },
-        {
-          "id": "WPNAIL",
-          "name": "Unlimited Routine Nail Trims",
-          "qty": "Unlimited"
-        },
-        {
-          "id": "WPX",
-          "name": "10% Discount on Heartworm and Flea/Tick Prevention",
-          "qty": ""
-        }
-      ],
-      "optional": [
-        {
-          "id": "WPSPAYK9",
-          "name": "Spay Surgery",
-          "cost": 54,
-          "qty": 1,
-          "includesNote": "Includes Pre-Op Blood Panel"
-        },
-        {
-          "id": "WPNEUK9",
-          "name": "Neuter Surgery",
-          "cost": 52.67,
-          "qty": 1,
-          "includesNote": "Includes Pre-Op Blood Panel"
-        },
-        {
-          "id": "WPANAL",
-          "name": "6 Anal Gland Expressions",
-          "cost": 17.2,
-          "qty": 6
-        },
-        {
-          "id": "K222",
-          "name": "Microchip I.D. and Registration",
-          "cost": 4.27,
-          "qty": 1
-        },
-        {
-          "id": "RADS3",
-          "name": "WP Radiograph (3 Views)",
-          "cost": 20.33,
-          "qty": 1
-        }
-      ]
-    },
     "canineAdult": {
-      "name": "Canine Adult Plan 2026",
-      "displayName": "Canine Adult Plan 2026",
-      "species": "canine",
       "baseCost": 62,
+      "displayName": "Canine Adult Plan 2026",
       "included": [
         {
           "id": "WPOF",
@@ -124,130 +49,59 @@
           "qty": ""
         }
       ],
+      "name": "Canine Adult Plan 2026",
       "optional": [
         {
-          "id": "WPSPAYK9",
-          "name": "Spay Surgery",
           "cost": 54,
-          "qty": 1,
-          "includesNote": "Includes Pre-Op Blood Panel"
+          "id": "WPSPAYK9",
+          "includesNote": "Includes Pre-Op Blood Panel",
+          "name": "Spay Surgery",
+          "qty": 1
         },
         {
-          "id": "WPNEUK9",
-          "name": "Neuter Surgery",
           "cost": 52.67,
-          "qty": 1,
-          "includesNote": "Includes Pre-Op Blood Panel"
+          "id": "WPNEUK9",
+          "includesNote": "Includes Pre-Op Blood Panel",
+          "name": "Neuter Surgery",
+          "qty": 1
         },
         {
-          "id": "WPDENT1",
-          "name": "Dental Procedure",
           "cost": 50.47,
-          "qty": 1,
-          "includesNote": "Includes Pre-Op Blood Panel"
+          "id": "WPDENT1",
+          "includesNote": "Includes Pre-Op Blood Panel",
+          "name": "Dental Procedure",
+          "qty": 1
         },
         {
+          "cost": 17.2,
           "id": "WPANAL",
           "name": "6 Anal Gland Expressions",
-          "cost": 17.2,
           "qty": 6
         },
         {
+          "cost": 4.27,
           "id": "K222",
           "name": "Microchip I.D. & Registration",
-          "cost": 4.27,
           "qty": 1
         },
         {
+          "cost": 35,
           "id": "WP701",
           "name": "Abdominal Ultrasound",
-          "cost": 35,
           "qty": 1
         },
         {
+          "cost": 20.33,
           "id": "RADS3",
           "name": "WP Radiograph (3 Views)",
-          "cost": 20.33,
           "qty": 1
-        }
-      ]
-    },
-    "kitten": {
-      "name": "Kitten Plan 2026",
-      "displayName": "Kitten Plan 2026",
-      "species": "feline",
-      "baseCost": 54,
-      "included": [
-        {
-          "id": "WPOF",
-          "name": "Unlimited Office Visits, Including Comprehensive Physical Exam",
-          "qty": "Unlimited"
-        },
-        {
-          "id": "B23",
-          "name": "Core Vaccinations as Recommended by Your Veterinarian - May Include FVRCP and Rabies",
-          "qty": "As Recommended"
-        },
-        {
-          "id": "T805",
-          "name": "Up to 2 Parasite Fecal Tests",
-          "qty": "2"
-        },
-        {
-          "id": "OF358",
-          "name": "Up to 2 Deworming Treatments",
-          "qty": "2"
-        },
-        {
-          "id": "SA260",
-          "name": "Feline Leukemia/Feline Immunodeficiency Virus Test",
-          "qty": "1"
-        },
-        {
-          "id": "WPNAIL",
-          "name": "Unlimited Routine Nail Trims",
-          "qty": "Unlimited"
-        },
-        {
-          "id": "WPX",
-          "name": "10% Discount on Heartworm and Flea/Tick Prevention",
-          "qty": ""
         }
       ],
-      "optional": [
-        {
-          "id": "WPFELSP",
-          "name": "Spay Surgery",
-          "cost": 53.47,
-          "qty": 1,
-          "includesNote": "Includes Pre-Op Blood Panel"
-        },
-        {
-          "id": "WPFELNEU",
-          "name": "Neuter Surgery",
-          "cost": 44.93,
-          "qty": 1,
-          "includesNote": "Includes Pre-Op Blood Panel"
-        },
-        {
-          "id": "K222",
-          "name": "Microchip I.D. and Registration",
-          "cost": 4.27,
-          "qty": 1
-        },
-        {
-          "id": "RADS3",
-          "name": "WP Radiograph (3 Views)",
-          "cost": 20.33,
-          "qty": 1
-        }
-      ]
+      "species": "canine"
     },
     "felineAdult": {
-      "name": "Feline Adult Plan 2026",
-      "displayName": "Feline Adult Plan 2026",
-      "species": "feline",
       "baseCost": 55,
+      "displayName": "Feline Adult Plan 2026",
       "included": [
         {
           "id": "WPOF",
@@ -290,55 +144,201 @@
           "qty": ""
         }
       ],
+      "name": "Feline Adult Plan 2026",
       "optional": [
         {
-          "id": "WPFELSP",
-          "name": "Spay Surgery",
           "cost": 53.47,
-          "qty": 1,
-          "includesNote": "Includes Pre-Op Blood Panel"
+          "id": "WPFELSP",
+          "includesNote": "Includes Pre-Op Blood Panel",
+          "name": "Spay Surgery",
+          "qty": 1
         },
         {
-          "id": "WPFELNEU",
-          "name": "Neuter Surgery",
           "cost": 44.93,
-          "qty": 1,
-          "includesNote": "Includes Pre-Op Blood Panel"
+          "id": "WPFELNEU",
+          "includesNote": "Includes Pre-Op Blood Panel",
+          "name": "Neuter Surgery",
+          "qty": 1
         },
         {
-          "id": "WPDENFEL",
-          "name": "Dental Procedure",
           "cost": 48.47,
-          "qty": 1,
-          "includesNote": "Includes Pre-Op Blood Panel"
+          "id": "WPDENFEL",
+          "includesNote": "Includes Pre-Op Blood Panel",
+          "name": "Dental Procedure",
+          "qty": 1
         },
         {
+          "cost": 4.27,
           "id": "K222",
           "name": "Microchip I.D. & Registration",
-          "cost": 4.27,
           "qty": 1
         },
         {
+          "cost": 35,
           "id": "WP701",
           "name": "Abdominal Ultrasound",
-          "cost": 35,
           "qty": 1
         },
         {
+          "cost": 20.33,
           "id": "RADS3",
           "name": "WP Radiograph (3 Views)",
-          "cost": 20.33,
           "qty": 1
         }
-      ]
+      ],
+      "species": "feline"
+    },
+    "kitten": {
+      "baseCost": 54,
+      "displayName": "Kitten Plan 2026",
+      "included": [
+        {
+          "id": "WPOF",
+          "name": "Unlimited Office Visits, Including Comprehensive Physical Exam",
+          "qty": "Unlimited"
+        },
+        {
+          "id": "B23",
+          "name": "Core Vaccinations as Recommended by Your Veterinarian - May Include FVRCP and Rabies",
+          "qty": "As Recommended"
+        },
+        {
+          "id": "T805",
+          "name": "Up to 2 Parasite Fecal Tests",
+          "qty": "2"
+        },
+        {
+          "id": "OF358",
+          "name": "Up to 2 Deworming Treatments",
+          "qty": "2"
+        },
+        {
+          "id": "SA260",
+          "name": "Feline Leukemia/Feline Immunodeficiency Virus Test",
+          "qty": "1"
+        },
+        {
+          "id": "WPNAIL",
+          "name": "Unlimited Routine Nail Trims",
+          "qty": "Unlimited"
+        },
+        {
+          "id": "WPX",
+          "name": "10% Discount on Heartworm and Flea/Tick Prevention",
+          "qty": ""
+        }
+      ],
+      "name": "Kitten Plan 2026",
+      "optional": [
+        {
+          "cost": 53.47,
+          "id": "WPFELSP",
+          "includesNote": "Includes Pre-Op Blood Panel",
+          "name": "Spay Surgery",
+          "qty": 1
+        },
+        {
+          "cost": 44.93,
+          "id": "WPFELNEU",
+          "includesNote": "Includes Pre-Op Blood Panel",
+          "name": "Neuter Surgery",
+          "qty": 1
+        },
+        {
+          "cost": 4.27,
+          "id": "K222",
+          "name": "Microchip I.D. and Registration",
+          "qty": 1
+        },
+        {
+          "cost": 20.33,
+          "id": "RADS3",
+          "name": "WP Radiograph (3 Views)",
+          "qty": 1
+        }
+      ],
+      "species": "feline"
+    },
+    "puppy": {
+      "baseCost": 67,
+      "displayName": "Puppy Plan 2026",
+      "included": [
+        {
+          "id": "WPOF",
+          "name": "Unlimited Office Visits, Including Comprehensive Physical Exam",
+          "qty": "Unlimited"
+        },
+        {
+          "id": "B025",
+          "name": "Core Vaccinations as Recommended by Your Veterinarian - May Include DA2PP, Leptospirosis, Bordetella and Rabies",
+          "qty": "As Recommended"
+        },
+        {
+          "id": "T805",
+          "name": "Up to 2 Parasite Fecal Tests",
+          "qty": "2"
+        },
+        {
+          "id": "OF358",
+          "name": "Up to 2 Deworming Treatments",
+          "qty": "2"
+        },
+        {
+          "id": "99-0011516",
+          "name": "Heartworm/Tick Borne Disease Test",
+          "qty": "1"
+        },
+        {
+          "id": "WPNAIL",
+          "name": "Unlimited Routine Nail Trims",
+          "qty": "Unlimited"
+        },
+        {
+          "id": "WPX",
+          "name": "10% Discount on Heartworm and Flea/Tick Prevention",
+          "qty": ""
+        }
+      ],
+      "name": "Puppy Plan 2026",
+      "optional": [
+        {
+          "cost": 54,
+          "id": "WPSPAYK9",
+          "includesNote": "Includes Pre-Op Blood Panel",
+          "name": "Spay Surgery",
+          "qty": 1
+        },
+        {
+          "cost": 52.67,
+          "id": "WPNEUK9",
+          "includesNote": "Includes Pre-Op Blood Panel",
+          "name": "Neuter Surgery",
+          "qty": 1
+        },
+        {
+          "cost": 17.2,
+          "id": "WPANAL",
+          "name": "6 Anal Gland Expressions",
+          "qty": 6
+        },
+        {
+          "cost": 4.27,
+          "id": "K222",
+          "name": "Microchip I.D. and Registration",
+          "qty": 1
+        },
+        {
+          "cost": 20.33,
+          "id": "RADS3",
+          "name": "WP Radiograph (3 Views)",
+          "qty": 1
+        }
+      ],
+      "species": "canine"
     }
   },
   "settings": {
-    "enrollmentFeeFirst": 50,
-    "enrollmentFeeAdditional": 40
-  },
-  "metadata": {
-    "lastUpdated": "2026-02-13T19:02:16.869Z",
-    "version": "2026.2"
+    "enrollmentFeeAdditional": 40,
+    "enrollmentFeeFirst": 50.01
   }
 }
