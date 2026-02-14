@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "lastUpdated": "2026-02-14T00:23:53.860Z",
+    "lastUpdated": "2026-02-14T00:25:35.754Z",
     "version": "2026.2"
   },
   "plans": {
@@ -339,6 +339,6 @@
   },
   "settings": {
     "enrollmentFeeAdditional": 40,
-    "enrollmentFeeFirst": 50.01
+    "enrollmentFeeFirst": 50
   }
 }
