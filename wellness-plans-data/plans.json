@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "lastUpdated": "2026-02-18T21:31:44.519Z",
+    "lastUpdated": "2026-02-18T21:33:19.044Z",
     "schemaVersion": 2,
     "version": "2026.3"
   },
@@ -579,7 +579,7 @@
             "code": "WPOF",
             "name": "Office Visit / Examination",
             "note": "Per visit",
-            "retailPrice": 71
+            "retailPrice": 70
           },
           {
             "code": "B025",
