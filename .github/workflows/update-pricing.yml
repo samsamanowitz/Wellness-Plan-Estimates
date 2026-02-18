@@ -30,6 +30,15 @@ jobs:
             exit 1
           fi
 
+          # Validate cancellation data exists for each plan (non-blocking)
+          for plan in puppy canineAdult kitten felineAdult; do
+            if ! jq -e ".plans.${plan}.cancellation" /tmp/payload.json > /dev/null 2>&1; then
+              echo "⚠️ Warning: Missing cancellation data for ${plan}"
+            else
+              echo "✅ Cancellation data present for ${plan}"
+            fi
+          done
+
           echo "✅ Validation passed"
 
       - name: Update plans.json
